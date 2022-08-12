@@ -11,6 +11,8 @@ namespace Core.Users
     {
 
         public string DisplayName { get; set; }
+        public string JobTitle { get; set; }
+        public string Department { get; set; }
         public ICollection<RefreshToken> RefreshTokens { get; set; } = new List<RefreshToken>();
 
     }

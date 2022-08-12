@@ -1,5 +1,7 @@
 ﻿using Application.Configuration;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -38,6 +40,10 @@ namespace API.Extensions
 
             services.AddControllers(opt =>
             {
+                var policy = new AuthorizationPolicyBuilder()
+                                    .RequireAuthenticatedUser()
+                                    .Build();
+                opt.Filters.Add(new AuthorizeFilter(policy));
                 opt.InputFormatters.Insert(0, new CsvInputFormatter());
             });
 

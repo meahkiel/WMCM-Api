@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace API.Controllers
 {
-    [Authorize]
+    [AllowAnonymous]
     public class ContactsController : BaseApiController
     {
         

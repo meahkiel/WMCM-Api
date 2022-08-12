@@ -22,11 +22,9 @@ namespace API
         public void ConfigureServices(IServiceCollection services)
         {
             
-
-            
-
             services.AddApplicationServices(Configuration);
             services.AddIdentityServices(Configuration);
+
             //add infrastructure twilio
             services.Configure<TwilioSettings>(Configuration.GetSection("TwilioSMSKey"));
             services.AddTransient<ISMSService, TwilioSMS>();

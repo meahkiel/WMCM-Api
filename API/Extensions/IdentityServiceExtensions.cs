@@ -1,4 +1,5 @@
-﻿using Core.Users;
+﻿using API.Services;
+using Core.Users;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
@@ -16,27 +17,45 @@ namespace API.Extensions
             IConfiguration configuration)
         {
 
-            service.AddIdentityCore<AppUser>(opt => {
-               opt.Password.RequireNonAlphanumeric = false;
-           })
+            service.AddIdentityCore<AppUser>(opt =>
+            {
+                opt.Password.RequireNonAlphanumeric = false;
+            })
+            .AddRoles<IdentityRole>()
             .AddEntityFrameworkStores<DataContext>()
-            .AddSignInManager<SignInManager<AppUser>>()
-            .AddDefaultTokenProviders();
+            .AddSignInManager<SignInManager<AppUser>>();
+            
+            
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["TokenKey"]));
-            
-            service
-                .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(opt => {
-                    opt.TokenValidationParameters = new TokenValidationParameters {
+            service.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(opt =>
+                {
+                    opt.TokenValidationParameters = new TokenValidationParameters
+                    {
                         ValidateIssuerSigningKey = true,
                         IssuerSigningKey = key,
                         ValidateIssuer = false,
-                        ValidateAudience = false,
-                        ValidateLifetime = true,
-                        ClockSkew = TimeSpan.Zero
+                        ValidateAudience = false
                     };
+
                 });
+            service.AddScoped<TokenService>();
+            
+            
+            
+            //service
+            //    .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            //    .AddJwtBearer(opt => {
+            //        opt.TokenValidationParameters = new TokenValidationParameters {
+            //            ValidateIssuerSigningKey = true,
+            //            IssuerSigningKey = key,
+            //            ValidateIssuer = false,
+            //            ValidateAudience = false,
+            //            ValidateLifetime = true,
+            //            ClockSkew = TimeSpan.Zero
+            //        };
+            //    });
             
             return service;
         }

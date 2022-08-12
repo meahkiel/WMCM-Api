@@ -1,6 +1,7 @@
 ﻿using API.DTOs;
 using API.Services;
 using Core.Users;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -11,77 +12,85 @@ using System.Threading.Tasks;
 
 namespace API.Controllers
 {
+    [AllowAnonymous]
     [Route("api/[controller]")]
     [ApiController]
     public class AccountController : ControllerBase
     {
         private readonly UserManager<AppUser> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
         private readonly SignInManager<AppUser> _signInManager;
         private readonly TokenService _tokenService;
         private readonly IConfiguration _configuration;
 
-        public AccountController(
-            UserManager<AppUser> userManager,
+        public AccountController(UserManager<AppUser> userManager,
+            RoleManager<IdentityRole> roleManager,
             SignInManager<AppUser> signInManager,
-            TokenService tokenService,
-            IConfiguration configuration)
+            TokenService tokenService)
         {
             _userManager = userManager;
+            _roleManager = roleManager;
             _signInManager = signInManager;
             _tokenService = tokenService;
-            _configuration = configuration;
         }
-
-        [HttpPost]
-        public async Task<ActionResult<UserDto>> Login(LoginDto login)
+        
+        [HttpPost("login")]
+        public async Task<ActionResult<UserDto>> Login([FromBody]LoginDto loginDto)
         {
-            var user = await _userManager.Users
-               .FirstOrDefaultAsync(x => x.Email == login.Email);
-
-            if (user == null) return Unauthorized("Invalid Email");
-            
-            
-            var result = await _signInManager
-                                .CheckPasswordSignInAsync(user, login.Password,false);
-            if(result.Succeeded)
-            {
-                await SetRefreshToken(user);
-                return CreateUserObject(user);
+            var user = await _userManager.FindByNameAsync(loginDto.Username);
+            if(user == null) {
+                return Unauthorized("Username is not recognized"); 
             }
 
-            return Unauthorized("Invalid Password");
+            var result = await _signInManager.CheckPasswordSignInAsync(user, loginDto.Password, false);
+            if(result.Succeeded)
+            {
+                return CreateUser(user);
+            }
+
+            return Unauthorized("Incorrect Password");
         }
 
-
-        #region private method
-        private async Task SetRefreshToken(AppUser appUser)
+        [HttpPost("register")]
+        public async Task<ActionResult<UserDto>> Register(RegisterDto registerDto)
         {
-            var refreshToken = _tokenService.GenerateRefreshToken();
-            appUser.RefreshTokens.Add(refreshToken);
-            await _userManager.UpdateAsync(appUser);
-
-            var cookieOptions = new CookieOptions
+            if(await _userManager.Users.AnyAsync(u => u.UserName == registerDto.Username))
             {
-                HttpOnly = true,
-                Expires = DateTime.UtcNow.AddDays(7)
+                return BadRequest("Username already taken");
+            }
+
+            var user = new AppUser
+            {
+                DisplayName = registerDto.DisplayName,
+                Email = registerDto.Email,
+                UserName = registerDto.Username,
+                JobTitle = registerDto.JobTitle,
+                Department = registerDto.Department
             };
 
-            Response.Cookies.Append("refreshToken", refreshToken.Token, cookieOptions);
+            var result = await _userManager.CreateAsync(user,registerDto.Password);
+
+            if(result.Succeeded)
+            {
+                await _userManager.AddToRoleAsync(user, registerDto.UserRole);
+                return CreateUser(user);
+            }
+
+            return BadRequest("Problem in registering user");
 
         }
 
-        private UserDto CreateUserObject(AppUser user)
+        private UserDto CreateUser(AppUser user)
         {
             return new UserDto
             {
                 DisplayName = user.DisplayName,
+                JobTitle = user.JobTitle,
                 Token = _tokenService.CreateToken(user),
-                Username = user.UserName
+                Username = user.UserName,
+                Department = user.Department
             };
         }
-        #endregion
-
-
 
     }
 }

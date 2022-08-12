@@ -1,5 +1,8 @@
 ﻿using Core.Campaigns;
 using Core.Contacts;
+using Core.Enum;
+using Core.Users;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Persistence.Context;
 using System;
@@ -11,13 +14,56 @@ namespace Persistence.Seeds
 {
     public class Seed
     {
-        public static async Task SeedData(DataContext context)
+        public static async Task SeedData(DataContext context,UserManager<AppUser> userManager,RoleManager<IdentityRole> roleManager)
         {
             //if (context.Contacts.Any())
             //{
             //    var contacts = await context.Contacts.ToListAsync();
             //    context.Contacts.RemoveRange(contacts);
             //}
+
+            if(!roleManager.Roles.Any())
+            {
+                await roleManager.CreateAsync(new IdentityRole(RoleEnum.Manager.ToString().ToLower()));
+                await roleManager.CreateAsync(new IdentityRole(RoleEnum.Admin.ToString().ToLower()));
+                await roleManager.CreateAsync(new IdentityRole(RoleEnum.Staff.ToString().ToLower()));
+            }
+
+            if(!userManager.Users.Any())
+            {
+                var users = new List<AppUser>()
+                {
+                    new AppUser() { DisplayName = "Bob", JobTitle = "Manager",
+                        UserName = "bob", Department="Marketing", Email="bob@testing.com"},
+                    new AppUser() { DisplayName = "Designer1", JobTitle = "Graphic Designer",
+                        UserName = "des", Department="Marketing", Email="des@testing.com"},
+                    new AppUser() { DisplayName = "Staff1", JobTitle="Staff", UserName = "staff", Email="staff@testing.com"}
+
+                };
+                foreach (var user in users)
+                {
+                    await userManager.CreateAsync(user, "Pa$$w0rd");
+                }
+            }
+            else
+            {
+               
+                var users = await userManager.Users.ToListAsync();
+                foreach(var user in users)
+                {
+                    if(user.UserName == "bob")
+                    {   
+                        await userManager.AddToRoleAsync(user,RoleEnum.Admin.ToString().ToLower());
+                        await userManager.AddToRoleAsync(user, RoleEnum.Manager.ToString().ToLower());
+                    }
+                    else
+                    {
+                        await userManager.AddToRoleAsync(user,RoleEnum.Staff.ToString().ToLower());
+                    }
+                }
+            }
+
+         
 
 
             if (!context.Contacts.Any())
