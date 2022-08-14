@@ -10,8 +10,7 @@ namespace API.Controllers
 {
     [AllowAnonymous]
     public class ContactsController : BaseApiController
-    {
-        
+    {   
         public ContactsController(IMediator mediator) : 
             base(mediator)
         {
@@ -26,18 +25,19 @@ namespace API.Controllers
         }
 
         [HttpPost("create")]
-        public async Task<IActionResult> Create([FromBody] Create.Command command )
+        public async Task<IActionResult> Create([FromBody] ContactFormDTO form )
         {
-            return HandleResult(await _mediator.Send(command));
+            return HandleResult(await _mediator.Send(new Create.Command { ContactForm = form}));
         }
 
         [HttpPut]
         public async Task<IActionResult> Update([FromBody] ContactFormDTO form)
         {
-            return HandleResult(await _mediator.Send(new Update.Command { ContactForm = form }));
+            return HandleResult(await _mediator
+                    .Send(new Update.Command { ContactForm = form }));
         }
 
-        [AllowAnonymous]
+        
         [HttpGet]
         public async Task<IActionResult> All()
         {

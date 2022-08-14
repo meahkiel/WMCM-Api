@@ -1,4 +1,6 @@
-﻿namespace API.DTOs
+﻿using System.Collections.Generic;
+
+namespace API.DTOs
 {
     public class UserDto
     {
@@ -11,5 +13,7 @@
 
         public string Department { get; set; }
         public string Image { get; set; }
+
+        public List<string> Roles { get; set; }
     }
 }

@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace API.Controllers
@@ -45,7 +46,8 @@ namespace API.Controllers
             var result = await _signInManager.CheckPasswordSignInAsync(user, loginDto.Password, false);
             if(result.Succeeded)
             {
-                return CreateUser(user);
+                var userRoles = await _userManager.GetRolesAsync(user);
+                return CreateUser(user,userRoles);
             }
 
             return Unauthorized("Incorrect Password");
@@ -54,8 +56,7 @@ namespace API.Controllers
         [HttpPost("register")]
         public async Task<ActionResult<UserDto>> Register(RegisterDto registerDto)
         {
-            if(await _userManager.Users.AnyAsync(u => u.UserName == registerDto.Username))
-            {
+            if(await _userManager.Users.AnyAsync(u => u.UserName == registerDto.Username)) {
                 return BadRequest("Username already taken");
             }
 
@@ -70,17 +71,18 @@ namespace API.Controllers
 
             var result = await _userManager.CreateAsync(user,registerDto.Password);
 
-            if(result.Succeeded)
-            {
+            if(result.Succeeded) {
+                
                 await _userManager.AddToRoleAsync(user, registerDto.UserRole);
-                return CreateUser(user);
+                IList<string> userRoles = new List<string> { registerDto.UserRole };
+
+                return CreateUser(user,userRoles);
             }
 
             return BadRequest("Problem in registering user");
-
         }
 
-        private UserDto CreateUser(AppUser user)
+        private UserDto CreateUser(AppUser user,IList<string> roles)
         {
             return new UserDto
             {
@@ -88,7 +90,8 @@ namespace API.Controllers
                 JobTitle = user.JobTitle,
                 Token = _tokenService.CreateToken(user),
                 Username = user.UserName,
-                Department = user.Department
+                Department = user.Department,
+                Roles = new List<string>(roles)
             };
         }
 
