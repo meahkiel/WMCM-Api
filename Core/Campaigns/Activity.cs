@@ -17,9 +17,9 @@ namespace Core.Campaigns
             var activity = new Activity();
             activity.DispatchDate = dispatchDate;
             activity.DateSchedule = sendDate.HasValue ? sendDate.Value : DateTime.Now;
-            activity.Title = $"SMS - {campaignTitle}";
-            activity.Description = $"send SMS Message ({body.Substring(0, 12)}"; 
-            
+            activity.Title = $"{campaignTitle}";
+            activity.Description = $"{body}";
+            activity.Type = "sms";
             activity.AddDetail(new ActivityDetail
             {
                 Key = "message",

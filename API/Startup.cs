@@ -1,6 +1,7 @@
 using API.Extensions;
-using Infrastructure.Services.Credential;
-using Infrastructure.Services.SMS;
+using Infrastructure.External.Credential;
+using Infrastructure.External.SMS;
+using Infrastructure.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -27,7 +28,8 @@ namespace API
 
             //add infrastructure twilio
             services.Configure<TwilioSettings>(Configuration.GetSection("TwilioSMSKey"));
-            services.AddTransient<ISMSService, TwilioSMS>();
+            services.AddScoped<ISMSService, TwilioSMS>();
+            services.AddScoped<IActivityService, ActivityService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

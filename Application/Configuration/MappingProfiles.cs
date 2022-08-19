@@ -1,5 +1,6 @@
 ﻿using Application.DTO;
 using AutoMapper;
+using Core.Campaigns;
 using Core.Contacts;
 using System;
 using System.Collections.Generic;
@@ -21,6 +22,8 @@ namespace Application.Configuration
             CreateMap<ContactFormDTO, Contact>()
                 .ForMember(c => c.Title, o => o.MapFrom(c => c.ToSalutation()))
                 .ForMember(c => c.Gender, o => o.MapFrom(c => c.ToGender()));
+
+            CreateMap<Campaign, CampaignDTO>().ReverseMap();
             
             
         }

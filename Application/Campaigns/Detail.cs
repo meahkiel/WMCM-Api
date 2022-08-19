@@ -1,7 +1,10 @@
-﻿using Core.Campaigns;
+﻿using Application.Core;
+using Core.Campaigns;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Persistence.Context;
 using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -9,12 +12,12 @@ namespace Application.Campaigns
 {
     public class Detail
     {
-        public class Query : IRequest<Campaign>
+        public class Query : IRequest<Result<Campaign>>
         {
             public Guid Id { get; set; }
         }
 
-        public class QueryHandler : IRequestHandler<Query, Campaign>
+        public class QueryHandler : IRequestHandler<Query, Result<Campaign>>
         {
             private readonly DataContext _context;
 
@@ -24,11 +27,25 @@ namespace Application.Campaigns
             }
 
 
-            public async Task<Campaign> Handle(Query request, CancellationToken cancellationToken)
+            public async Task<Result<Campaign>> Handle(Query request, CancellationToken cancellationToken)
             {
-                var campaign = await _context.Campaigns.FindAsync(request.Id);
+                try
+                {
+                    var campaign = await _context.Campaigns
+                        .Include(c => c.Activities)
+                        .Where(c => c.Id == request.Id).SingleAsync();
+                    
+                    foreach(var activity in campaign.Activities)
+                    {
+                        activity.Campaign = null;
+                    }
 
-                return campaign;
+                    if (campaign == null) throw new Exception("Campaign Error");
+                    return Result<Campaign>.Success(campaign);
+                }catch (Exception ex)
+                {
+                    return Result<Campaign>.Failure(ex.Message);
+                }
             }
         }
     }

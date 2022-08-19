@@ -1,4 +1,5 @@
-﻿using Core.Campaigns;
+﻿using Application.Core;
+using Core.Campaigns;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Persistence.Context;
@@ -13,13 +14,13 @@ namespace Application.Campaigns
 {
     public class List
     {
-        public class Query : IRequest<List<Campaign>>
+        public class Query : IRequest<Result<List<Campaign>>>
         {
 
         }
 
 
-        public class QueryHandler : IRequestHandler<Query, List<Campaign>>
+        public class QueryHandler : IRequestHandler<Query, Result<List<Campaign>>>
         {
             private readonly DataContext _context;
 
@@ -28,9 +29,19 @@ namespace Application.Campaigns
                 _context = context;
             }
 
-            public async Task<List<Campaign>> Handle(Query request, CancellationToken cancellationToken)
+            public async Task<Result<List<Campaign>>> Handle(Query request, CancellationToken cancellationToken)
             {
-                return await _context.Campaigns.ToListAsync();
+                try
+                {
+                    var result = await _context.Campaigns.ToListAsync();
+                    return Result<List<Campaign>>.Success(result);
+                }
+                catch (Exception ex)
+                {
+                    return Result<List<Campaign>>.Failure(ex.Message);
+                }
+                
+
             }
         }
     }

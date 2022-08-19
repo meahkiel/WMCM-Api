@@ -1,11 +1,11 @@
-﻿using Infrastructure.Services.Credential;
+﻿using Infrastructure.Core;
+using Infrastructure.External.Credential;
 using Microsoft.Extensions.Options;
-using System;
 using System.Threading.Tasks;
 using Twilio;
 using Twilio.Rest.Api.V2010.Account;
 
-namespace Infrastructure.Services.SMS
+namespace Infrastructure.External.SMS
 {
     public class TwilioSMS : ISMSService
     {
@@ -16,16 +16,16 @@ namespace Infrastructure.Services.SMS
             _settings = settings.Value;
         }
 
-        public async Task<MessageResource> SendSMS(string to, string body)
+        public async Task<MessageResource> SendSMS(SMSFormValue value)
         {
             TwilioClient.Init(_settings.AccountSID, _settings.AuthToken);
+
             var result = await MessageResource.CreateAsync(
-                body: body,
+                body: value.Message,
                 from: new Twilio.Types.PhoneNumber(_settings.PhoneNo),
-                to: new Twilio.Types.PhoneNumber(to));
+                to: new Twilio.Types.PhoneNumber(value.To));
 
             return result;
-
         }
     }
 }

@@ -25,13 +25,16 @@ namespace API.Extensions
             {
                 opt.AddPolicy("CorsPolicy", policy =>
                 {
-                    policy.AllowAnyMethod().AllowAnyHeader().WithOrigins("http://localhost:3000");
+                    policy.AllowAnyMethod()
+                        .AllowAnyHeader()
+                        .WithOrigins("http://localhost:3000");
                 });
             });
 
             services.AddDbContext<DataContext>(opt =>
             {
                 opt.UseSqlite(configuration.GetConnectionString("SqliteConnection"));
+                
             });
 
             services.AddMediatR(typeof(Application.Campaigns.List.QueryHandler));

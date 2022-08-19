@@ -2,13 +2,12 @@
 using API.Services;
 using Core.Users;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using System;
 using System.Collections.Generic;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace API.Controllers
@@ -81,6 +80,21 @@ namespace API.Controllers
 
             return BadRequest("Problem in registering user");
         }
+
+        [Authorize]
+        [HttpGet("user")]
+        public async Task<ActionResult<UserDto>> GetCurrentUser()
+        {
+            var user = await _userManager.FindByNameAsync(User.FindFirstValue(ClaimTypes.Name));
+
+            if (user == null) 
+                return BadRequest("Problem in getting user");
+
+            var userRoles  = await _userManager.GetRolesAsync(user);
+            
+            return CreateUser(user,userRoles);
+        } 
+        
 
         private UserDto CreateUser(AppUser user,IList<string> roles)
         {

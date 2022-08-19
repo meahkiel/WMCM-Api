@@ -1,42 +1,48 @@
 ﻿using Application.Campaigns;
+using Application.DTO;
 using Core.Campaigns;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
 
 namespace API.Controllers
 {
+    [AllowAnonymous]
     [Route("api/[controller]")]
     [ApiController]
-    public class CampaignController : ControllerBase
+    public class CampaignController : BaseApiController
     {
         
-        private readonly IMediator _mediator;
+       
 
-        public CampaignController(IMediator mediator)
+        public CampaignController(IMediator mediator) : base(mediator)
         {
-            _mediator = mediator;
+            
         }
 
         [HttpGet]
         public async Task<IActionResult> List()
         {
-            return Ok(await _mediator.Send(new List.Query()));
+            return HandleResult(await _mediator.Send(new List.Query()));
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(Guid id)
         {
-            return Ok(await _mediator.Send(new Detail.Query { Id = id }));
+            return HandleResult(await _mediator.Send(new Detail.Query { Id = id }));
         }
 
-        [HttpPost]
-        public async Task<IActionResult> Create([FromBody]Campaign campaign)
+        [AllowAnonymous]
+        [HttpPost("create")]
+        public async Task<IActionResult> Create([FromBody]CampaignDTO campaign)
         {
-            await _mediator.Send(new Create.Command { Campaign = campaign });
+            var unit = await _mediator.Send(new Create.Command { Campaign = campaign });
 
-            return Ok();
+            return HandleResult(unit);
         }
+
+        
     }
 }

@@ -1,28 +1,29 @@
 ﻿using Application.Activities;
+using Application.Campaigns;
 using Application.DTO;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
 namespace API.Controllers
 {
+    [AllowAnonymous]
     [Route("api/[controller]")]
     [ApiController]
-    public class ActivityController : ControllerBase
+    public class ActivityController : BaseApiController
     {
-        private readonly IMediator _mediator;
+      
 
-        public ActivityController(IMediator mediator)
+        public ActivityController(IMediator mediator) : base(mediator)
         {
-            _mediator = mediator;
+           
         }
 
         [HttpPost("sms")]
-        public async Task<IActionResult> SendSMS([FromBody]SmsDTO smsFormValue)
+        public async Task<IActionResult> SendSMS([FromBody]ActivitySMSDTO smsFormValue)
         {
-            await _mediator.Send(new SendSMS.Command { SmsFormValue = smsFormValue });
-
-            return Ok();
+            return HandleResult(await _mediator.Send(new CreateSMSActivity.Command { SMSActivity = smsFormValue }));
         }
     }
 }
