@@ -21,7 +21,7 @@ namespace API.Controllers
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly SignInManager<AppUser> _signInManager;
         private readonly TokenService _tokenService;
-        private readonly IConfiguration _configuration;
+        
 
         public AccountController(UserManager<AppUser> userManager,
             RoleManager<IdentityRole> roleManager,
@@ -94,7 +94,18 @@ namespace API.Controllers
             
             return CreateUser(user,userRoles);
         } 
-        
+
+        [HttpGet]
+        public async Task<ActionResult<List<UserDto>>> GetUsers()
+        {
+            var users = await _userManager.Users.ToListAsync();
+            List<UserDto> userDto = new List<UserDto>();
+            foreach(var user in users)
+            {
+                userDto.Add(CreateUser(user,await _userManager.GetRolesAsync(user)));
+            }
+            return  userDto;
+        }
 
         private UserDto CreateUser(AppUser user,IList<string> roles)
         {

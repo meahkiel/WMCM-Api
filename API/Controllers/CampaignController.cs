@@ -1,6 +1,5 @@
 ﻿using Application.Campaigns;
 using Application.DTO;
-using Core.Campaigns;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -9,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace API.Controllers
 {
-    [AllowAnonymous]
+    
     [Route("api/[controller]")]
     [ApiController]
     public class CampaignController : BaseApiController
@@ -39,7 +38,6 @@ namespace API.Controllers
         public async Task<IActionResult> Create([FromBody]CampaignDTO campaign)
         {
             var unit = await _mediator.Send(new Create.Command { Campaign = campaign });
-
             return HandleResult(unit);
         }
 
