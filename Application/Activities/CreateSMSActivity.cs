@@ -11,7 +11,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Application.Campaigns
+namespace Application.Activities
 {
     public class CreateSMSActivity
     {
@@ -37,17 +37,26 @@ namespace Application.Campaigns
                 try
                 {
 
-                    var activity = await _activityService.CreateSMS(request.SMSActivity.Group,
-                                                request.SMSActivity.Message, request.SMSActivity.DateToSend);
+                   
 
                     
-                    var campaign = await _context.Campaigns.Where(c => c.Id == request.SMSActivity.CampaignId)
+                    var campaign = await _context.Campaigns
+                                    .Where(c => c.Id == request.SMSActivity.CampaignId)
                                     .FirstOrDefaultAsync();
-                   
-                    if (campaign == null) throw new Exception("campaign doesn't exist");
-                    activity.Campaign = campaign;
                     
-                    _context.Activities.Add(activity);
+                    
+                    if (campaign == null) throw new Exception("campaign doesn't exist");
+
+                    var activity = await _activityService
+                                           .CreateSMS(request.SMSActivity.Title,
+                                               request.SMSActivity.Group,
+                                               request.SMSActivity.Message,
+                                               request.SMSActivity.DateToSend);
+
+                    activity.Campaign = campaign;
+                    _context.Attach(activity)
+                        .State = EntityState.Added;
+
 
                     var result = await _context.SaveChangesAsync() > 0;
                     if(!result)

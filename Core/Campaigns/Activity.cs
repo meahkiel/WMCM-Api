@@ -11,15 +11,16 @@ namespace Core.Campaigns
     public class Activity : BaseEntity
     {
 
-        public static Activity CreateSMSActivity(string to, string body,DateTime dispatchDate,DateTime? sendDate = null,string campaignTitle = "")
+        public static Activity CreateSMSActivity(string title,string to, string body,DateTime dispatchDate,DateTime? sendDate = null,string campaignTitle = "")
         {
             var details = new List<ActivityDetail>();
             var activity = new Activity();
             activity.DispatchDate = dispatchDate;
             activity.DateSchedule = sendDate.HasValue ? sendDate.Value : DateTime.Now;
-            activity.Title = $"{campaignTitle}";
-            activity.Description = $"{body}";
+            activity.Title = $"SMS - {title}";
+            activity.Description = $"Sent Message {to}";
             activity.Type = "sms";
+            activity.Status = "Completed";
             activity.AddDetail(new ActivityDetail
             {
                 Key = "message",
@@ -43,6 +44,8 @@ namespace Core.Campaigns
 
         public DateTime DispatchDate { get; set; }
         public Campaign Campaign { get; set; }
+
+        public string Status { get; set; }
 
         private List<ActivityDetail> _details = new List<ActivityDetail>();
 

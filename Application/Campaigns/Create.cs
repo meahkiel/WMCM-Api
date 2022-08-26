@@ -15,14 +15,14 @@ namespace Application.Campaigns
 {
     public class Create
     {
-        public class Command : IRequest<Result<Unit>>
+        public class Command : IRequest<Result<CampaignDTO>>
         {
 
             public CampaignDTO Campaign { get; set; }
 
         }
 
-        public class CommandHandler : IRequestHandler<Command, Result<Unit>>
+        public class CommandHandler : IRequestHandler<Command, Result<CampaignDTO>>
         {
             private readonly DataContext _context;
             private readonly IMapper _mapper;
@@ -35,7 +35,7 @@ namespace Application.Campaigns
 
          
 
-            public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
+            public async Task<Result<CampaignDTO>> Handle(Command request, CancellationToken cancellationToken)
             {
                 var campaign = _mapper.Map<Campaign>(request.Campaign);
                 campaign.Id = Guid.NewGuid();
@@ -48,11 +48,12 @@ namespace Application.Campaigns
                     {
                         throw new Exception("Failed to create campaign");
                     }
-                    return Result<Unit>.Success(Unit.Value);
+                    
+                    return Result<CampaignDTO>.Success(_mapper.Map<CampaignDTO>(campaign));
                 }
                 catch(Exception ex)
                 {
-                    return Result<Unit>.Failure(ex.Message);
+                    return Result<CampaignDTO>.Failure(ex.Message);
                 }
             }
         }

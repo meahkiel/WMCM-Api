@@ -14,6 +14,21 @@ namespace Persistence.Seeds
 {
     public class Seed
     {
+
+        public static async Task DataSeedTemplate(DataContext context)
+        {
+            if(!context.Templates.Any())
+            {
+                var templates = new List<Template>
+                {
+                    new Template { Id = Guid.NewGuid(), Title = "Customer Greeting", Description = "New Customer Template ", TemplateHtml = "Greetings Customer"},
+                    new Template { Id = Guid.NewGuid(),Title = "Al Sharq", Description = "Al Sharq Big Sales and Raffle", TemplateHtml = "Big Sales and Raffle awaits you"}
+                };
+                context.Templates.AddRange(templates);
+            }
+
+            await context.SaveChangesAsync();
+        }
         public static async Task SeedData(DataContext context,UserManager<AppUser> userManager,RoleManager<IdentityRole> roleManager)
         {
             //if (context.Contacts.Any())
@@ -52,13 +67,19 @@ namespace Persistence.Seeds
                 foreach(var user in users)
                 {
                     if(user.UserName == "bob")
-                    {   
-                        await userManager.AddToRoleAsync(user,RoleEnum.Admin.ToString().ToLower());
-                        await userManager.AddToRoleAsync(user, RoleEnum.Manager.ToString().ToLower());
+                    {
+                        var result = await userManager.RemoveFromRoleAsync(user, RoleEnum.Admin.ToString().ToLower());
+
+                        //await userManager.AddToRoleAsync(user,RoleEnum.Admin.ToString().ToLower());
+                        //await userManager.AddToRoleAsync(user, RoleEnum.Manager.ToString().ToLower());
+                    }
+                    else if(user.UserName == "admin")
+                    {
+                        var result = await userManager.RemoveFromRoleAsync(user, RoleEnum.Staff.ToString().ToLower());
                     }
                     else
                     {
-                        await userManager.AddToRoleAsync(user,RoleEnum.Staff.ToString().ToLower());
+                        //await userManager.AddToRoleAsync(user,RoleEnum.Staff.ToString().ToLower());
                     }
                 }
             }
@@ -124,7 +145,7 @@ namespace Persistence.Seeds
                 context.Campaigns.AddRange(campaigns);
             }
 
-            await context.SaveChangesAsync();
+            //await context.SaveChangesAsync();
 
 
         }

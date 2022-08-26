@@ -13,7 +13,7 @@ namespace Infrastructure.Services
 
     public interface IActivityService
     {
-        Task<Activity> CreateSMS(string group,string message,DateTime? sendDate);
+        Task<Activity> CreateSMS(string title,string group,string message,DateTime? sendDate);
     }
     public class ActivityService : IActivityService
     {
@@ -28,10 +28,13 @@ namespace Infrastructure.Services
         }
 
 
-        public async Task<Activity> CreateSMS(string group, string message, DateTime? sendDate)
+        public async Task<Activity> CreateSMS(string title,string group, string message, DateTime? sendDate)
         {
+
+
             var contacts = await _context.Contacts
                         .Where(c => c.GroupTag.Contains(group))
+                        .AsNoTracking()
                         .ToListAsync();
 
             if (!contacts.Any())
@@ -45,7 +48,7 @@ namespace Infrastructure.Services
                             .SendSMS(new Core.SMSFormValue(contact.PrimaryContact,"",message));
             }
                 
-            return Activity.CreateSMSActivity(group, message,DateTime.Now, sendDate);
+            return Activity.CreateSMSActivity(title, group, message,DateTime.Now, sendDate);
         }
     }
 }

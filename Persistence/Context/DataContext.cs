@@ -11,7 +11,7 @@ namespace Persistence.Context
 
         public DbSet<Campaign> Campaigns { get; set; }
         public DbSet<Activity> Activities { get; set; }
-        public DbSet<Contact> Templates { get; set; }
+        public DbSet<Template> Templates { get; set; }
 
         public DbSet<Contact> Contacts { get; set; }
 
@@ -26,6 +26,9 @@ namespace Persistence.Context
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.Entity<Contact>()
+                .HasKey(t => t.Id);
+
+            modelBuilder.Entity<Template>()
                 .HasKey(t => t.Id);
 
             modelBuilder.Entity<Contact>()

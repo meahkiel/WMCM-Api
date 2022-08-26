@@ -24,7 +24,10 @@ namespace Application.Configuration
                 .ForMember(c => c.Gender, o => o.MapFrom(c => c.ToGender()));
 
             CreateMap<Campaign, CampaignDTO>().ReverseMap();
-            
+
+            CreateMap<Activity, ActivityEntryDTO>()
+                .ForMember(a => a.Title, o => o.MapFrom(o => o.Title))
+                .ForMember(a => a.Type, o => o.MapFrom(o => o.Type));
             
         }
     }
