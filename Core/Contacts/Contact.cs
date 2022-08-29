@@ -69,6 +69,11 @@ namespace Core.Contacts
             };
         }
 
+        public string ToFullName()
+        {
+            return $"{FirstName} {MiddleName.Substring(0, 1).ToUpper()} {LastName}";
+        }
+
         public Salutation Title { get; set; }
         public string FirstName { get; set; }
         public string MiddleName { get; set; }

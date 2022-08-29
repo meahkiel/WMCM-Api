@@ -15,12 +15,14 @@ namespace Core.Campaigns
         {
             var details = new List<ActivityDetail>();
             var activity = new Activity();
+
             activity.DispatchDate = dispatchDate;
             activity.DateSchedule = sendDate.HasValue ? sendDate.Value : DateTime.Now;
             activity.Title = $"SMS - {title}";
             activity.Description = $"Sent Message {to}";
             activity.Type = "sms";
             activity.Status = "Completed";
+            
             activity.AddDetail(new ActivityDetail
             {
                 Key = "message",

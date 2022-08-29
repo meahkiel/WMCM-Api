@@ -1,6 +1,7 @@
 ﻿using Application.Core;
 using Application.DTO;
 using AutoMapper;
+using Infrastructure.Repositories.Customers;
 using MediatR;
 using Persistence.Context;
 using System;
@@ -18,19 +19,20 @@ namespace Application.Contacts
 
         public class QueryHandler : IRequestHandler<Query, Result<ContactFormDTO>>
         {
-            private readonly DataContext _context;
-          
+           
+            private readonly ICustomerRepo _repo;
             private readonly IMapper _mapper;
 
-            public QueryHandler(DataContext context, IMapper mapper)
+            public QueryHandler(ICustomerRepo repo, IMapper mapper)
             {
-                _context = context;
+               
+                _repo = repo;
                 _mapper = mapper;
             }
 
             public async Task<Result<ContactFormDTO>> Handle(Query request, CancellationToken cancellationToken) {
                 
-                var contact = await _context.Contacts.FindAsync(request.Id);
+                var contact = await _repo.GetSingle(request.Id);
 
                 return Result<ContactFormDTO>
                     .Success(_mapper.Map<ContactFormDTO>(contact));

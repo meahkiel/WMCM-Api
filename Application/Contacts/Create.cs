@@ -1,6 +1,7 @@
 ﻿using Application.Core;
 using Application.DTO;
 using Core.Contacts;
+using Infrastructure.Repositories.Customers;
 using MediatR;
 using Persistence.Context;
 using System;
@@ -19,12 +20,12 @@ namespace Application.Contacts
         }
 
         public class CommandHandler : IRequestHandler<Command, Result<Unit>>
-        {
-            private readonly DataContext _context;
-
-            public CommandHandler(DataContext context)
+        {   
+            private readonly ICustomerRepo _repo;
+            
+            public CommandHandler(ICustomerRepo repo)
             {
-                _context = context;
+                _repo = repo;
             }
 
             public async Task<Result<Unit>> Handle(Command request, 
@@ -42,11 +43,10 @@ namespace Application.Contacts
                     request.ContactForm.PrimaryContact,
                     request.ContactForm.Location,
                     request.ContactForm.GroupTag);
-
-                _context.Contacts.Add(contact);
+                
                 try
                 {
-                    await _context.SaveChangesAsync();
+                    await _repo.Create(contact);
                 }
                 catch (Exception ex)
                 {

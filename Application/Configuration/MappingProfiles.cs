@@ -23,6 +23,12 @@ namespace Application.Configuration
                 .ForMember(c => c.Title, o => o.MapFrom(c => c.ToSalutation()))
                 .ForMember(c => c.Gender, o => o.MapFrom(c => c.ToGender()));
 
+            CreateMap<Contact, ContactListDTO>()
+                .ForMember(c => c.Title, o => o.MapFrom(c => c.ToGenderString()))
+                .ForMember(c => c.Gender, o => o.MapFrom(c => c.ToGenderString()))
+                .ForMember(c => c.FullName, o => o.MapFrom(c => (c.ToFullName())));
+
+
             CreateMap<Campaign, CampaignDTO>().ReverseMap();
 
             CreateMap<Activity, ActivityEntryDTO>()

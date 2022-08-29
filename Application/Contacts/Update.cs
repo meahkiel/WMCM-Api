@@ -1,6 +1,8 @@
 ﻿using Application.Core;
 using Application.DTO;
 using AutoMapper;
+using Core.Contacts;
+using Infrastructure.Repositories.Customers;
 using MediatR;
 using Persistence.Context;
 using System;
@@ -21,12 +23,12 @@ namespace Application.Contacts
 
         public class CommandHandler : IRequestHandler<Command,Result<Unit>>
         {
-            private readonly DataContext _context;
+            private readonly ICustomerRepo _repo;
             private readonly IMapper _mapper;
 
-            public CommandHandler(DataContext context, IMapper mapper)
+            public CommandHandler(ICustomerRepo repo, IMapper mapper)
             {
-                _context = context;
+                _repo = repo;
                 _mapper = mapper;
             }
 
@@ -35,15 +37,13 @@ namespace Application.Contacts
                 
                 try
                 {
-                    Guid guidId = Guid.Parse(request.ContactForm.Id);
-                    var contact = await _context.Contacts.FindAsync(guidId);
-                    if (contact == null) {
-                        throw new Exception("Employee Not Found");
+
+                    var contact = _mapper.Map<Contact>(request.ContactForm);
+                    if(!await _repo.Update(contact))
+                    {
+                        throw new Exception("Contact cannot update");
                     }
 
-                    _mapper.Map(request.ContactForm, contact);
-
-                    var result = await _context.SaveChangesAsync();
                     return Result<Unit>.Success(Unit.Value);
 
                 }

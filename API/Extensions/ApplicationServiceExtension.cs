@@ -1,4 +1,5 @@
 ﻿using Application.Configuration;
+using Infrastructure.Repositories.Customers;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
@@ -37,10 +38,11 @@ namespace API.Extensions
                 
             });
 
+            //repository
+            services.AddScoped<ICustomerRepo, CustomerRepo>();
+
             services.AddMediatR(typeof(Application.Campaigns.List.QueryHandler));
-
             services.AddAutoMapper(typeof(MappingProfiles));
-
             services.AddControllers(opt =>
             {
                 var policy = new AuthorizationPolicyBuilder()

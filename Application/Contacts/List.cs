@@ -1,11 +1,9 @@
 ﻿using Application.Core;
 using Application.DTO;
-using Core.Contacts;
+using AutoMapper;
+using Infrastructure.Repositories.Customers;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
-using Persistence.Context;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -20,29 +18,21 @@ namespace Application.Contacts
 
         public class QueryHandler : IRequestHandler<Query, Result<List<ContactListDTO>>>
         {
-            private readonly DataContext _context;
+            private readonly ICustomerRepo _repo;
+            private readonly IMapper _mapper;
 
-            public QueryHandler(DataContext context)
+            public QueryHandler(ICustomerRepo repo,IMapper mapper)
             {
-                _context = context;
+                _repo = repo;
+                _mapper = mapper;
             }
 
             public async Task<Result<List<ContactListDTO>>> Handle(Query request, CancellationToken cancellationToken)
             {
-
-                var contacts = await _context.Contacts.Select(s => new ContactListDTO { 
-                    Id = s.Id,
-                    Title = s.ToTitleString(),
-                    FullName = $"{s.FirstName} {s.MiddleName.Substring(0,1).ToUpper()} {s.LastName}",
-                    EmailAddress = s.EmailAddress,
-                    Gender = s.ToGenderString(),
-                    MobileNo = s.MobileNo,
-                    PrimaryContact = string.IsNullOrEmpty(s.PrimaryContact) ? s.MobileNo : s.PrimaryContact,
-                    Location = s.Location,
-                    GroupTag = s.GroupTag,
-                }).ToListAsync(cancellationToken: cancellationToken);
                 
-                return Result<List<ContactListDTO>>.Success(contacts);
+                var contacts = await _repo.GetActives();
+                
+                return Result<List<ContactListDTO>>.Success(_mapper.Map<List<ContactListDTO>>(contacts));
             }
         }
     }
