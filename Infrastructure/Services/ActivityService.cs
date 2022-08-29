@@ -36,7 +36,7 @@ namespace Infrastructure.Services
                             .SendSMS(new Core.SMSFormValue(mobileNo, "", message));
             }
 
-            return Activity.CreateSMSActivity(title, group, message, DateTime.Now, sendDate);
+            return Activity.CreateSMSActivity(title, description, message, DateTime.Now, sendDate);
 
         }
 

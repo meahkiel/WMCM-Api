@@ -12,7 +12,7 @@ namespace Application.Contacts
         private readonly List<Contact> _contacts;
         private string _additional;
 
-        public ContactSerialize(List<Contact> contacts,string additional)
+        public ContactSerialize(List<Contact> contacts, string additional)
         {
             _contacts = contacts;
             _additional = additional;
@@ -21,12 +21,12 @@ namespace Application.Contacts
         public List<string> ExtractSMS()
         {
             List<string> list = new List<string>();
-            foreach(Contact contact in _contacts)
+            foreach (Contact contact in _contacts)
             {
                 list.Add(contact.MobileNo);
             }
 
-            if(!String.IsNullOrEmpty(_additional))
+            if (!String.IsNullOrEmpty(_additional))
             {
                 var strAdditional = _additional.Split(',');
                 list.AddRange(strAdditional);
@@ -34,6 +34,7 @@ namespace Application.Contacts
 
             return list;
         }
+    }
 
        
 }
