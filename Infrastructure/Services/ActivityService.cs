@@ -29,15 +29,24 @@ namespace Infrastructure.Services
         public async Task<Activity> CreateBulkSMS(string title, string description, List<string> mobileNos, string message, DateTime? sendDate)
         {
             List<MessageResource> messageResources = new List<MessageResource>();
-            //start sending the message
-            foreach (var mobileNo in mobileNos)
+            Activity activity = null;
+            if(sendDate.HasValue && sendDate.Value > DateTime.Now)
             {
-                MessageResource messageBroker = await _smsService
-                            .SendSMS(new Core.SMSFormValue(mobileNo, "", message));
+                activity = Activity.CreateSMSActivity(title, description, message, DateTime.Now, sendDate);
+                activity.Status = "pending";
+            } 
+            else
+            {
+                //start sending the message
+                foreach (var mobileNo in mobileNos)
+                {
+                    MessageResource messageBroker = await _smsService
+                                .SendSMS(new Core.SMSFormValue(mobileNo, "", message));
+                }
+                activity = Activity.CreateSMSActivity(title, description, message, DateTime.Now, sendDate);
             }
 
-            return Activity.CreateSMSActivity(title, description, message, DateTime.Now, sendDate);
-
+            return activity;
         }
 
        

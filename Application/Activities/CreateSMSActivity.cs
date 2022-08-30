@@ -41,6 +41,14 @@ namespace Application.Activities
 
                 try
                 {
+                    
+                    var campaign = await _context.Campaigns
+                                   .Where(c => c.Id == request.SMSActivity.CampaignId)
+                                   .FirstOrDefaultAsync();
+
+                    //do not create if campaign is invalid
+                    if (campaign == null)
+                        throw new Exception("campaign doesn't exist");
 
                     var contacts = await  _customerRepo.GetContactByGroup(request.SMSActivity.Group);
                     ContactSerialize serialize = new ContactSerialize(contacts.ToList(),request.SMSActivity.MobileNos);
@@ -52,14 +60,6 @@ namespace Application.Activities
                                               request.SMSActivity.Message,
                                               request.SMSActivity.DateToSend);
 
-                    var campaign = await _context.Campaigns
-                                    .Where(c => c.Id == request.SMSActivity.CampaignId)
-                                    .FirstOrDefaultAsync();
-                    
-                    
-                    if (campaign == null) 
-                        throw new Exception("campaign doesn't exist");
-                    
                     campaign.AddActivity(activity);
                     
                     var result = await _context.SaveChangesAsync() > 0;
