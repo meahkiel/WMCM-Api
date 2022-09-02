@@ -4,6 +4,7 @@ using Core.Campaigns;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Persistence.Context;
+using Repositories.Unit;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,26 +24,20 @@ namespace Application.Activities
 
         public class QueryHandler : IRequestHandler<Query, Result<ActivityInitial>>
         {
-            private readonly DataContext _context;
+            private readonly UnitWrapper _context;
 
-            public QueryHandler(DataContext context)
+            public QueryHandler(UnitWrapper context)
             {
                 _context = context;
             }
             public async Task<Result<ActivityInitial>> Handle(Query request, CancellationToken cancellationToken)
             {
-                List<string> groups = new List<string>();
-                List<Template> templates = new List<Template>();
+               
 
-                if(request.Type == "sms")
-                {
-                    groups = await _context.Contacts
-                                    .Select(c => c.GroupTag).Distinct().ToListAsync();
-                    templates = await _context.Templates.Where(t => t.Type.ToLower() == "sms").ToListAsync();
+                var groups = await _context.CustomerRepo.GetGroupContact();
+                var templates = await _context.TemplateRepo.GetAllTemplatesAsync(request.Type.ToLower());
 
-                }
-
-                return Result<ActivityInitial>.Success(new ActivityInitial(groups.ToArray(),templates));
+                return Result<ActivityInitial>.Success(new ActivityInitial(groups.ToArray(),templates.ToList()));
             }
         }
     }

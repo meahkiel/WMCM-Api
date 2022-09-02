@@ -1,11 +1,8 @@
 ﻿using Application.Contacts;
 using Application.Core;
 using Application.DTO;
-using Infrastructure.Repositories.Customers;
-using Infrastructure.Services;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
-using Persistence.Context;
+using Repositories.Unit;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,32 +22,28 @@ namespace Application.Activities
         public class CommandHandler : IRequestHandler<Command, Result<Unit>>
         {
             private readonly IActivityService _activityService;
-            private readonly DataContext _context;
-            private readonly ICustomerRepo _customerRepo;
+            private readonly UnitWrapper _context;
+            
 
             public CommandHandler(IActivityService activityService,
-                    DataContext context, 
-                    ICustomerRepo customerRepo )
+                    UnitWrapper context)
             {
                 _activityService = activityService;
                 _context = context;
-                _customerRepo = customerRepo;
+               
             }
             public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
             {
-
                 try
                 {
-                    
-                    var campaign = await _context.Campaigns
-                                   .Where(c => c.Id == request.SMSActivity.CampaignId)
-                                   .FirstOrDefaultAsync();
+
+                    var campaign = await _context.CampaignRepo.GetSingleCampaign(request.SMSActivity.CampaignId); 
 
                     //do not create if campaign is invalid
                     if (campaign == null)
                         throw new Exception("campaign doesn't exist");
 
-                    var contacts = await  _customerRepo.GetContactByGroup(request.SMSActivity.Group);
+                    var contacts = await _context.CustomerRepo.GetContactByGroup(request.SMSActivity.Group);
                     ContactSerialize serialize = new ContactSerialize(contacts.ToList(),request.SMSActivity.MobileNos);
                     List<string> mobileNos = serialize.ExtractSMS();
                     string description = request.SMSActivity.Group +
@@ -61,8 +54,9 @@ namespace Application.Activities
                                               request.SMSActivity.DateToSend);
 
                     campaign.AddActivity(activity);
+                    _context.CampaignRepo.Update(campaign);
                     
-                    var result = await _context.SaveChangesAsync() > 0;
+                    var result = await _context.SaveChangesAsync();
                     if(!result)
                     {
                         throw new Exception("Error on campaign");

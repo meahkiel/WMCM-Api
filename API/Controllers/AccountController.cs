@@ -113,7 +113,7 @@ namespace API.Controllers
             {
                 DisplayName = user.DisplayName,
                 JobTitle = user.JobTitle,
-                Token = _tokenService.CreateToken(user),
+                Token = _tokenService.CreateToken(user,roles[0]),
                 Username = user.UserName,
                 Department = user.Department,
                 Roles = new List<string>(roles)

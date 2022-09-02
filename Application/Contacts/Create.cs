@@ -1,11 +1,9 @@
 ﻿using Application.Core;
 using Application.DTO;
 using Core.Contacts;
-using Infrastructure.Repositories.Customers;
 using MediatR;
-using Persistence.Context;
+using Repositories.Unit;
 using System;
-using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -21,11 +19,11 @@ namespace Application.Contacts
 
         public class CommandHandler : IRequestHandler<Command, Result<Unit>>
         {   
-            private readonly ICustomerRepo _repo;
+            private readonly UnitWrapper _context;
             
-            public CommandHandler(ICustomerRepo repo)
+            public CommandHandler(UnitWrapper context)
             {
-                _repo = repo;
+                _context = context;
             }
 
             public async Task<Result<Unit>> Handle(Command request, 
@@ -46,7 +44,8 @@ namespace Application.Contacts
                 
                 try
                 {
-                    await _repo.Create(contact);
+                     _context.CustomerRepo.Add(contact);
+                    await _context.SaveChangesAsync();
                 }
                 catch (Exception ex)
                 {

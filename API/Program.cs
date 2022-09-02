@@ -28,7 +28,7 @@ namespace API
 
                 //var userManager = services.GetRequiredService<UserManager<AppUser>>();
                 //var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
-                await Seed.DataSeedTemplate(context);
+                await Seed.DataSeedTask(context);
 
             }
             catch (Exception ex)

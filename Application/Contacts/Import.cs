@@ -3,6 +3,7 @@ using Application.DTO;
 using Core.Contacts;
 using MediatR;
 using Persistence.Context;
+using Repositories.Unit;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,9 +22,9 @@ namespace Application.Contacts
 
         public class CommandHandler : IRequestHandler<Command,Result<Unit>>
         {
-            private readonly DataContext _context;
+            private readonly UnitWrapper _context;
 
-            public CommandHandler(DataContext context)
+            public CommandHandler(UnitWrapper context)
             {
                 _context = context;
             }
@@ -48,7 +49,7 @@ namespace Application.Contacts
                            contactForm.Location,
                            contactForm.GroupTag);
 
-                           _context.Contacts.Add(contactEntry);
+                           _context.CustomerRepo.Add(contactEntry);
                     }
 
                     await _context.SaveChangesAsync();

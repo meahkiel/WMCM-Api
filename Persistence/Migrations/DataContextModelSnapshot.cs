@@ -165,6 +165,91 @@ namespace Persistence.Migrations
                     b.ToTable("Contacts");
                 });
 
+            modelBuilder.Entity("Core.Tasks.Comment", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Content")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("LastUpdatedOn")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid?>("SubTaskId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("UserName")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SubTaskId");
+
+                    b.ToTable("Comment");
+                });
+
+            modelBuilder.Entity("Core.Tasks.MarketingTask", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("Close")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("LastUpdatedOn")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Title")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("UserName")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("MarketingTasks");
+                });
+
+            modelBuilder.Entity("Core.Tasks.SubTask", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("AssignedTo")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("LastUpdatedOn")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid?>("MarketingTaskId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Status")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Task")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MarketingTaskId");
+
+                    b.ToTable("SubTask");
+                });
+
             modelBuilder.Entity("Core.Users.AppUser", b =>
                 {
                     b.Property<string>("Id")
@@ -409,6 +494,24 @@ namespace Persistence.Migrations
                     b.Navigation("Activity");
                 });
 
+            modelBuilder.Entity("Core.Tasks.Comment", b =>
+                {
+                    b.HasOne("Core.Tasks.SubTask", "SubTask")
+                        .WithMany("Comments")
+                        .HasForeignKey("SubTaskId");
+
+                    b.Navigation("SubTask");
+                });
+
+            modelBuilder.Entity("Core.Tasks.SubTask", b =>
+                {
+                    b.HasOne("Core.Tasks.MarketingTask", "MarketingTask")
+                        .WithMany("SubTasks")
+                        .HasForeignKey("MarketingTaskId");
+
+                    b.Navigation("MarketingTask");
+                });
+
             modelBuilder.Entity("Core.Users.RefreshToken", b =>
                 {
                     b.HasOne("Core.Users.AppUser", "AppUser")
@@ -477,6 +580,16 @@ namespace Persistence.Migrations
             modelBuilder.Entity("Core.Campaigns.Campaign", b =>
                 {
                     b.Navigation("Activities");
+                });
+
+            modelBuilder.Entity("Core.Tasks.MarketingTask", b =>
+                {
+                    b.Navigation("SubTasks");
+                });
+
+            modelBuilder.Entity("Core.Tasks.SubTask", b =>
+                {
+                    b.Navigation("Comments");
                 });
 
             modelBuilder.Entity("Core.Users.AppUser", b =>

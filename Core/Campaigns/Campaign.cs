@@ -21,7 +21,6 @@ namespace Core.Campaigns
         public void AddActivity(Activity activity)
         {
             _activities.Add(activity);  
-
         }
 
 

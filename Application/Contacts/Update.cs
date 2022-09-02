@@ -2,13 +2,9 @@
 using Application.DTO;
 using AutoMapper;
 using Core.Contacts;
-using Infrastructure.Repositories.Customers;
 using MediatR;
-using Persistence.Context;
+using Repositories.Unit;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -23,12 +19,12 @@ namespace Application.Contacts
 
         public class CommandHandler : IRequestHandler<Command,Result<Unit>>
         {
-            private readonly ICustomerRepo _repo;
+            private readonly UnitWrapper _context;
             private readonly IMapper _mapper;
 
-            public CommandHandler(ICustomerRepo repo, IMapper mapper)
+            public CommandHandler(UnitWrapper context, IMapper mapper)
             {
-                _repo = repo;
+                _context = context;
                 _mapper = mapper;
             }
 
@@ -39,7 +35,8 @@ namespace Application.Contacts
                 {
 
                     var contact = _mapper.Map<Contact>(request.ContactForm);
-                    if(!await _repo.Update(contact))
+                    _context.CustomerRepo.Update(contact);
+                    if (!await _context.SaveChangesAsync())
                     {
                         throw new Exception("Contact cannot update");
                     }

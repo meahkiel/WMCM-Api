@@ -1,22 +1,21 @@
 ﻿using Core.Contacts;
+using Repositories.Base;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Infrastructure.Repositories.Customers
+namespace Repositories.Customer
 {
-    public interface ICustomerRepo
+    public interface ICustomerRepo : IRepositoryBase<Contact>
     {
-        Task<bool> Create(Contact contact);
+       
         Task<Contact> GetSingle(Guid id);
         Task<IEnumerable<Contact>> GetActives();
         Task<IEnumerable<Contact>> GetContactByGroup(string groupTag);
         Task<bool> Inactivate(Guid id);
-        Task<bool> Update(Contact contact);
-       
 
-        
+        Task<IEnumerable<string>> GetGroupContact();
     }
 }

@@ -4,10 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Application.Users
+namespace Application.Core
 {
-    public class Create
+    public interface IUserAccessorService
     {
-
+        string GetUsername();
+        string GetUserRole();
     }
 }

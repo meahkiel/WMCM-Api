@@ -6,8 +6,12 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Core.Campaigns
-
 {
+
+   
+
+
+
     public class Activity : BaseEntity
     {
 

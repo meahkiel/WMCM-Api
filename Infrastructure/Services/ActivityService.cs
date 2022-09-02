@@ -1,21 +1,14 @@
-﻿using Core.Campaigns;
+﻿using Application.Core;
+using Core.Campaigns;
 using Infrastructure.External.SMS;
-using Microsoft.EntityFrameworkCore;
-using Persistence.Context;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Twilio.Rest.Api.V2010.Account;
 
 namespace Infrastructure.Services
 {
 
-    public interface IActivityService
-    {
-        Task<Activity> CreateBulkSMS(string title,string description, List<string> mobileNos,string message,DateTime? sendDate);
-
-    }
     public class ActivityService : IActivityService
     {
        
@@ -29,6 +22,7 @@ namespace Infrastructure.Services
         public async Task<Activity> CreateBulkSMS(string title, string description, List<string> mobileNos, string message, DateTime? sendDate)
         {
             List<MessageResource> messageResources = new List<MessageResource>();
+            
             Activity activity = null;
             if(sendDate.HasValue && sendDate.Value > DateTime.Now)
             {
