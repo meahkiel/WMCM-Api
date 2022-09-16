@@ -24,7 +24,7 @@ namespace Repositories.Unit
 
         }
 
-        public IMarketingRepo MarketingRepo { 
+        public IMarketingRepo Marketings { 
             get { 
                 if(_marketing == null)
                 {
@@ -34,7 +34,7 @@ namespace Repositories.Unit
             } 
         }
 
-        public ICustomerRepo CustomerRepo
+        public ICustomerRepo Customers
         {
             get
             {

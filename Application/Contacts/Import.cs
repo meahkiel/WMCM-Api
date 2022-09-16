@@ -49,7 +49,7 @@ namespace Application.Contacts
                            contactForm.Location,
                            contactForm.GroupTag);
 
-                           _context.CustomerRepo.Add(contactEntry);
+                           _context.Customers.Add(contactEntry);
                     }
 
                     await _context.SaveChangesAsync();

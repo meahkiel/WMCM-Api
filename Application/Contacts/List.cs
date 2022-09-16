@@ -30,7 +30,7 @@ namespace Application.Contacts
             public async Task<Result<List<ContactListDTO>>> Handle(Query request, CancellationToken cancellationToken)
             {
 
-                var contacts = await _context.CustomerRepo.GetActives();
+                var contacts = await _context.Customers.GetActives();
                 
                 return Result<List<ContactListDTO>>.Success(_mapper.Map<List<ContactListDTO>>(contacts));
             }

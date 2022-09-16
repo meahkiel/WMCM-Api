@@ -21,6 +21,7 @@ namespace Persistence.Context
         public DbSet<Template> Templates { get; set; }
         public DbSet<Contact> Contacts { get; set; }
         public DbSet<MarketingTask> MarketingTasks { get; set; }
+        public DbSet<SubTask> SubTasks { get; set; }
 
         public DataContext(DbContextOptions options) : base(options)
         {
@@ -68,6 +69,7 @@ namespace Persistence.Context
                     entry.Property("LastUpdatedOn").CurrentValue = timestamp;
                     if(entry.State == EntityState.Added)
                     {
+                        
                         entry.Property("CreatedOn").CurrentValue = timestamp;
                     }
                 }

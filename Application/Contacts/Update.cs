@@ -35,7 +35,7 @@ namespace Application.Contacts
                 {
 
                     var contact = _mapper.Map<Contact>(request.ContactForm);
-                    _context.CustomerRepo.Update(contact);
+                    _context.Customers.Update(contact);
                     if (!await _context.SaveChangesAsync())
                     {
                         throw new Exception("Contact cannot update");

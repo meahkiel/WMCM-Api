@@ -43,7 +43,7 @@ namespace Application.Activities
                     if (campaign == null)
                         throw new Exception("campaign doesn't exist");
 
-                    var contacts = await _context.CustomerRepo.GetContactByGroup(request.SMSActivity.Group);
+                    var contacts = await _context.Customers.GetContactByGroup(request.SMSActivity.Group);
                     ContactSerialize serialize = new ContactSerialize(contacts.ToList(),request.SMSActivity.MobileNos);
                     List<string> mobileNos = serialize.ExtractSMS();
                     string description = request.SMSActivity.Group +

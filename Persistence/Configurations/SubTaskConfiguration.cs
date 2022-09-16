@@ -9,6 +9,7 @@ namespace Persistence.Configurations
     {
         public void Configure(EntityTypeBuilder<SubTask> builder)
         {
+            builder.ToTable(nameof(SubTask));
             builder.HasKey(t => t.Id);
             builder.Property<DateTime>("CreatedOn");
             builder.Property<DateTime>("LastUpdatedOn");

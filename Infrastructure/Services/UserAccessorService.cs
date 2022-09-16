@@ -2,7 +2,9 @@
 using Core.Users;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using System.Collections.Generic;
 using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace Infrastructure.Services
 {
@@ -10,20 +12,26 @@ namespace Infrastructure.Services
     {
 
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly UserManager<AppUser> _userManager;
 
         public UserAccessorService(IHttpContextAccessor httpContextAccessor,
-            UserManager<AppUser> user)
+            UserManager<AppUser> userManager)
         {
             _httpContextAccessor = httpContextAccessor;
+            _userManager = userManager;
         }
+
+
         public string GetUsername()
         {
             return _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.Name);
         }
 
-        public string GetUserRole()
+        public async Task<IList<string>> GetUserRole()
         {
-            return _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.Role);
+            string userName =  _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.Name);
+
+            return await _userManager.GetRolesAsync(await _userManager.FindByNameAsync(userName));
         }
     }
 }

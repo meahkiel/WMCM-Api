@@ -44,7 +44,7 @@ namespace Application.Contacts
                 
                 try
                 {
-                     _context.CustomerRepo.Add(contact);
+                     _context.Customers.Add(contact);
                     await _context.SaveChangesAsync();
                 }
                 catch (Exception ex)

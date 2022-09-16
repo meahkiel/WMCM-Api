@@ -1,9 +1,8 @@
-﻿using Application.MarketingTasks;
+﻿using Application.DTOs;
+using Application.MarketingTasks;
 using MediatR;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace API.Controllers
@@ -14,20 +13,35 @@ namespace API.Controllers
     {
         public TaskController(IMediator mediator) : base(mediator)
         {
+
         }
 
+        [Authorize(Roles = "manager")]
         [HttpGet]
         public async Task<IActionResult> GetTasks()
-        {
-           
-            return HandleResult(await _mediator.Send(new List.Query()));
-
+        {  
+            return HandleResult(await _mediator.Send(new GetTaskList.Query()));
         }
+
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetSubTask(string id)
         {
-            return HandleResult(await _mediator.Send(new LoadSubTask.Query { TaskId = id }));
+            return HandleResult(await _mediator.Send(new GetTask.Query { TaskId = id }));
         }
+
+        [Authorize(Roles = "manager")]
+        [HttpPost("create")]
+        public async Task<IActionResult> Create([FromBody]MarketingTaskDTO marketing)
+        {
+            return HandleResult(await _mediator.Send(new CreateTask.Command { MarketingTask = marketing }));
+        }
+
+        [HttpPost("update")]
+        public async Task<IActionResult> UpdateTask([FromBody] MarketingTaskDTO marketing)
+        {
+            return HandleResult(await _mediator.Send(new UpdateTask.Command { MarketingTask = marketing }));
+        }
+
     }
 }

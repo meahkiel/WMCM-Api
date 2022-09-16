@@ -9,6 +9,6 @@ namespace Application.Core
     public interface IUserAccessorService
     {
         string GetUsername();
-        string GetUserRole();
+        Task<IList<string>> GetUserRole();
     }
 }

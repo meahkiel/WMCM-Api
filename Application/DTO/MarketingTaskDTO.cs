@@ -1,29 +1,24 @@
 ﻿
 
+using Core.Tasks;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Application.DTOs
 {
-    public class MarketingTaskDTO
-    {
+
+    public record  MarketingSubTaskDTO(string Id,string Task,string AssignedTo,string Status);
+
+    public class MarketingTaskDTO {
         public Guid Id { get; set; }
         public string Title { get; set; } = "";
         public string UserName { get; set; } = "";
         public bool Close { get; set; } = false;
-
-        public int TotalSubTaskCount { get; set; }
-
+        public int TotalSubTaskCount => SubTasks.Where(s => s.Status != StatusEnum.Done.ToString()).Count();
         public List<MarketingSubTaskDTO> SubTasks { get; set; }
-
+        public List<string> Users => SubTasks.Select(s => s.AssignedTo).Distinct().ToList();
     }
 
-    public class MarketingSubTaskDTO
-    {
-        public string Task { get; set; } = "";
-
-        public string AssignedTo { get; set; } = null;
-
-        public string Status { get; set; } = "";
-    }
+   
 }

@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace API.Controllers
 {
-    [AllowAnonymous]
+    
     [Route("api/[controller]")]
     [ApiController]
     public class AccountController : ControllerBase
@@ -33,7 +33,8 @@ namespace API.Controllers
             _signInManager = signInManager;
             _tokenService = tokenService;
         }
-        
+
+        [AllowAnonymous]
         [HttpPost("login")]
         public async Task<ActionResult<UserDto>> Login([FromBody]LoginDto loginDto)
         {
@@ -81,7 +82,7 @@ namespace API.Controllers
             return BadRequest("Problem in registering user");
         }
 
-        [Authorize]
+        
         [HttpGet("user")]
         public async Task<ActionResult<UserDto>> GetCurrentUser()
         {

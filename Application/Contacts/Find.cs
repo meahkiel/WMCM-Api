@@ -31,7 +31,7 @@ namespace Application.Contacts
 
             public async Task<Result<ContactFormDTO>> Handle(Query request, CancellationToken cancellationToken) {
                 
-                var contact = await _context.CustomerRepo.GetSingle(request.Id);
+                var contact = await _context.Customers.GetSingle(request.Id);
 
                 return Result<ContactFormDTO>
                     .Success(_mapper.Map<ContactFormDTO>(contact));

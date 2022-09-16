@@ -34,7 +34,7 @@ namespace Application.Activities
             {
                
 
-                var groups = await _context.CustomerRepo.GetGroupContact();
+                var groups = await _context.Customers.GetGroupContact();
                 var templates = await _context.TemplateRepo.GetAllTemplatesAsync(request.Type.ToLower());
 
                 return Result<ActivityInitial>.Success(new ActivityInitial(groups.ToArray(),templates.ToList()));
