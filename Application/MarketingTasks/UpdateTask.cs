@@ -21,21 +21,36 @@ namespace Application.MarketingTasks
         {
             private readonly UnitWrapper _context;
             private readonly IMapper _mapper;
-            public CommandHandler(UnitWrapper context,IMapper mapper)
+            public CommandHandler(UnitWrapper context, IMapper mapper)
             {
                 _context = context;
                 _mapper = mapper;
-                
+
             }
             public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
             {
 
                 try
                 {
+                    var subTasks = new List<SubTask>();
 
-                    var subTasks = _mapper.Map<IList<SubTask>>(request.MarketingTask.SubTasks.ToList());
+                    request.MarketingTask.SubTasks.ForEach(task =>
+                    {
+                        var subTask = new SubTask {
+                            AssignedTo = task.AssignedTo,
+                            Task = task.Task,
+                            Status = task.Status,
+                        };
 
-                    await _context.Marketings.CreateUpdateSubTask(request.MarketingTask.Id, subTasks); 
+                        if (!string.IsNullOrEmpty(task.Id)) {
+                            subTask.Id = Guid.Parse(task.Id);
+                        }
+
+                        subTasks.Add(subTask);
+                    });
+
+
+                    await _context.Marketings.CreateUpdateSubTask(request.MarketingTask.Id, subTasks);
                     var result = await _context.SaveChangesAsync();
 
                     if (!result)

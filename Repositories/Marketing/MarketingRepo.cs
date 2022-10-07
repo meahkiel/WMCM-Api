@@ -27,21 +27,44 @@ namespace Repositories.Marketing
         /// </summary>
         /// <param name="userName"></param>
         /// <returns></returns>
-        public async Task<IEnumerable<MarketingTask>> GetListByUser(string userName)
+        public async Task<IEnumerable<MarketingTask>> GetListByUser(string userName, bool isHigherUser)
         {
-            return await _context.MarketingTasks
-                        .Where(t => t.Close == false)
-                        .Where(t => t.UserName == userName)
-                        .Select(m => new MarketingTask
-                        {
-                            Title = m.Title,
-                            Close = m.Close,
-                            Id = m.Id,
-                            UserName = m.UserName,
-                            SubTasks = m.SubTasks
-                                            .Select(s => new SubTask { AssignedTo = s.AssignedTo }).ToList()
-                        })
-                        .ToListAsync();
+
+            if(isHigherUser)
+            {
+
+                return await _context.MarketingTasks
+                            .Where(t => t.Close == false)
+                            .Where(t => t.UserName == userName)
+                            .Select(m => new MarketingTask
+                            {
+                                Title = m.Title,
+                                Close = m.Close,
+                                Id = m.Id,
+                                UserName = m.UserName,
+                                SubTasks = m.SubTasks
+                                                .Select(s => new SubTask { AssignedTo = s.AssignedTo }).ToList()
+                            })
+                            .ToListAsync();
+            }
+            else
+            {
+                return await _context.MarketingTasks
+                            .Where(t => t.Close == false)
+                            .Where(t => t.SubTasks.Any(s => s.AssignedTo == userName))
+                            .Select(m => new MarketingTask
+                            {
+                                Title = m.Title,
+                                Close = m.Close,
+                                Id = m.Id,
+                                UserName = m.UserName,
+                                SubTasks = m.SubTasks
+                                                .Select(s => new SubTask { AssignedTo = s.AssignedTo }).ToList()
+                            })
+                            .ToListAsync();
+            }
+
+
         }
 
         public async Task<MarketingTask> GetSubTask(Guid taskId)
@@ -80,7 +103,8 @@ namespace Repositories.Marketing
             var marketing = await _context.MarketingTasks
                                 .Include(s => s.SubTasks)
                                 .ThenInclude(s => s.Comments)
-                                .Where(m => m.Id == taskId).SingleOrDefaultAsync();
+                                .Where(m => m.Id == taskId)
+                                .SingleOrDefaultAsync();
             
             if(marketing == null) return false;
             

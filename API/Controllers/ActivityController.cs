@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace API.Controllers
 {
-    [AllowAnonymous]
+    
     [Route("api/[controller]")]
     [ApiController]
     public class ActivityController : BaseApiController
@@ -28,9 +28,17 @@ namespace API.Controllers
        
 
         [HttpPost("sms")]
-        public async Task<IActionResult> SendSMS([FromBody]ActivitySMSDTO smsFormValue)
+        public async Task<IActionResult> SendSMS([FromBody]ActivityEntryDTO smsFormValue)
         {
-            return HandleResult(await _mediator.Send(new CreateSMSActivity.Command { SMSActivity = smsFormValue }));
+            smsFormValue.Type = "sms";
+            return HandleResult(await _mediator.Send(new SendActivity.Command { Entry = smsFormValue }));
+        }
+
+        [HttpPost("email")]
+        public async Task<IActionResult> SendEmail([FromBody]ActivityEntryDTO emailFormValue)
+        {
+            emailFormValue.Type = "email";
+            return HandleResult(await _mediator.Send(new SendActivity.Command { Entry = emailFormValue }));
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using Application.Core;
 using Application.DTOs;
 using AutoMapper;
+using Core.Enum;
 using Core.Tasks;
 using MediatR;
 using Repositories.Unit;
@@ -35,8 +36,16 @@ namespace Application.MarketingTasks
             {
                 try
                 {
-                    
-                    var tasks = await _context.Marketings.GetListByUser(_userAccessor.GetUsername());
+                    var userRoles = await _userAccessor.GetUserRole();
+                    bool isHigherUser = false;
+                    foreach (var role in userRoles)
+                    {
+                        if (role == RoleEnum.Manager.ToString().ToLower())
+                        {
+                            isHigherUser = true;
+                        }
+                    }
+                        var tasks = await _context.Marketings.GetListByUser(_userAccessor.GetUsername(),isHigherUser);
                     var taskDtos = _mapper.Map<IEnumerable<MarketingTaskDTO>>(tasks);
                   
                     return Result<IEnumerable<MarketingTaskDTO>>.Success(taskDtos);

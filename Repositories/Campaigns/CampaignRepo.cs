@@ -1,4 +1,5 @@
 ﻿using Core.Campaigns;
+using Dapper;
 using Microsoft.EntityFrameworkCore;
 using Persistence.Context;
 using Repositories.DTO;

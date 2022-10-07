@@ -51,7 +51,7 @@ namespace Repositories.Customer
 
         public void Remove(Contact entity)
         {
-            throw new NotImplementedException();
+            _context.Contacts.Remove(entity);
         }
 
         public void Update(Contact entity)

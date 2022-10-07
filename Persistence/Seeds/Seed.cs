@@ -68,6 +68,7 @@ namespace Persistence.Seeds
                 };
                 context.Contacts.AddRange(contacts);
             }
+            await context.SaveChangesAsync();
         }
 
 

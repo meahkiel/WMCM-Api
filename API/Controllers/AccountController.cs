@@ -1,18 +1,20 @@
 ﻿using API.DTOs;
 using API.Services;
 using Core.Users;
+using Dapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
+using Persistence.Context;
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace API.Controllers
 {
-    
+
     [Route("api/[controller]")]
     [ApiController]
     public class AccountController : ControllerBase
@@ -21,29 +23,31 @@ namespace API.Controllers
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly SignInManager<AppUser> _signInManager;
         private readonly TokenService _tokenService;
-        
+        private readonly DataContext _dataContext;
 
         public AccountController(UserManager<AppUser> userManager,
             RoleManager<IdentityRole> roleManager,
             SignInManager<AppUser> signInManager,
-            TokenService tokenService)
+            TokenService tokenService,DataContext context)
         {
             _userManager = userManager;
             _roleManager = roleManager;
             _signInManager = signInManager;
             _tokenService = tokenService;
+            _dataContext = context;
         }
 
         [AllowAnonymous]
         [HttpPost("login")]
-        public async Task<ActionResult<UserDto>> Login([FromBody]LoginDto loginDto)
-        {
+        public async Task<ActionResult<UserDto>> Login([FromBody]LoginDto loginDto) {
             var user = await _userManager.FindByNameAsync(loginDto.Username);
+
             if(user == null) {
                 return Unauthorized("Username is not recognized"); 
             }
 
             var result = await _signInManager.CheckPasswordSignInAsync(user, loginDto.Password, false);
+            
             if(result.Succeeded)
             {
                 var userRoles = await _userManager.GetRolesAsync(user);
@@ -52,6 +56,8 @@ namespace API.Controllers
 
             return Unauthorized("Incorrect Password");
         }
+
+       
 
         [HttpPost("register")]
         public async Task<ActionResult<UserDto>> Register(RegisterDto registerDto)
@@ -81,7 +87,6 @@ namespace API.Controllers
 
             return BadRequest("Problem in registering user");
         }
-
         
         [HttpGet("user")]
         public async Task<ActionResult<UserDto>> GetCurrentUser()

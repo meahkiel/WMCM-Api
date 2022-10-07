@@ -31,6 +31,25 @@ namespace Application.Contacts
 
             return list;
         }
+
+
+       
+        public List<string> ExtractEmail()
+        {
+            List<string> list = new List<string>();
+            foreach (Contact contact in _contacts)
+            {
+                list.Add(contact.EmailAddress);
+            }
+
+            if (!String.IsNullOrEmpty(_additional))
+            {
+                var strAdditional = _additional.Split(',');
+                list.AddRange(strAdditional);
+            }
+
+            return list;
+        }
     }
 
        

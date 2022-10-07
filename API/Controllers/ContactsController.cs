@@ -1,27 +1,37 @@
-﻿using Application.Contacts;
+﻿
+using Application.Contacts;
+using Application.Core;
 using Application.DTO;
+using Infrastructure.Core;
+using Infrastructure.Services;
 using MediatR;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
+using System;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace API.Controllers
 {
-    
+
     public class ContactsController : BaseApiController
-    {   
-        public ContactsController(IMediator mediator) : 
+    {
+
+        private readonly IUploadCsvImportContacts _uploadFileDL;
+
+        public ContactsController(IMediator mediator, IUploadCsvImportContacts uploadFileDL) : 
             base(mediator)
         {
-           
+            _uploadFileDL = uploadFileDL;
         }
 
         
-        [HttpPost("import")]
-        public async Task<IActionResult> Import([FromBody] List<ContactFormDTO> contacts)
+        [HttpPost, Route("import")]
+        public async Task<IActionResult> Import([FromForm]UploadCsvFileRequest request)
         {   
-            return HandleResult(await _mediator.Send(new Import.Command { Entries = contacts } ));
+            string path = "Resources/" + request.File.FileName;
+            
+            return HandleResult(await _uploadFileDL.UploadCsvFile(request, path));
+
         }
 
         [HttpPost("create")]
@@ -50,7 +60,13 @@ namespace API.Controllers
             return HandleResult(await _mediator.Send(query));
         }
 
+        [HttpDelete("delete")]
+        public async Task<IActionResult> Delete([FromBody]Delete.Command cmd)
+        {
+            return HandleResult(await _mediator.Send(cmd));
+        }
 
+        
 
     }
 }

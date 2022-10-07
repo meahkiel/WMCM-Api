@@ -6,7 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Persistence.Context;
 using Repositories.Unit;
 
-namespace API.Extensions
+namespace Application.Extensions
 {
     public static class ApplicationServiceExtension
     {
@@ -16,7 +16,8 @@ namespace API.Extensions
             services.AddMediatR(typeof(Application.Campaigns.List.QueryHandler));
             services.AddDbContext<DataContext>(opt =>
             {
-                opt.UseSqlite(configuration.GetConnectionString("SqliteConnection"));
+                //opt.UseSqlite(configuration.GetConnectionString("SqliteConnection"));
+                opt.UseNpgsql(configuration.GetConnectionString("PostgreConnection"));
             });
 
             services.AddAutoMapper(typeof(MappingProfiles));

@@ -73,6 +73,7 @@ namespace Persistence.Context
                         entry.Property("CreatedOn").CurrentValue = timestamp;
                     }
                 }
+                
             }
 
             return base.SaveChangesAsync(cancellationToken);

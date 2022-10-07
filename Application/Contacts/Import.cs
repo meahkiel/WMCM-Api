@@ -1,5 +1,6 @@
 ﻿using Application.Core;
 using Application.DTO;
+using AutoMapper;
 using Core.Contacts;
 using MediatR;
 using Persistence.Context;
@@ -16,40 +17,32 @@ namespace Application.Contacts
     public class Import
     {
         public class Command : IRequest<Result<Unit>>
-        {
+        {   
             public List<ContactFormDTO> Entries { get; set; }
         }
 
         public class CommandHandler : IRequestHandler<Command,Result<Unit>>
         {
             private readonly UnitWrapper _context;
+            private readonly IMapper _mapper;
 
-            public CommandHandler(UnitWrapper context)
+            public CommandHandler(UnitWrapper context, IMapper mapper)
             {
                 _context = context;
+                _mapper = mapper;
             }
 
             public async Task<Result<Unit>> Handle(Command request, 
                 CancellationToken cancellationToken)
             {
-                var entries = request.Entries.ToList();
-
-                if (entries != null && entries.Count > 0) {
-
-                    foreach (var contactForm in entries) {
-                        var contactEntry = Contact.Create(
-                           contactForm.Title,
-                           contactForm.FirstName,
-                           contactForm.MiddleName,
-                           contactForm.LastName,
-                           contactForm.Gender,
-                           contactForm.MobileNo,
-                           contactForm.EmailAddress,
-                           contactForm.PrimaryContact,
-                           contactForm.Location,
-                           contactForm.GroupTag);
-
-                           _context.Customers.Add(contactEntry);
+              
+                if (request.Entries != null && request.Entries.Count > 0) {
+                    
+                    foreach (var contactForm in request.Entries) {
+                        var entry = _mapper.Map<Contact>(contactForm);
+                        entry.Title = contactForm.ToSalutation();
+                        entry.Gender = contactForm.ToGender();
+                        _context.Customers.Add(entry);
                     }
 
                     await _context.SaveChangesAsync();

@@ -22,7 +22,7 @@ namespace Repositories.Marketing
         /// <returns>
         /// Task result contains IEnumrable that contains marketingtask element 
         /// </returns>
-        Task<IEnumerable<MarketingTask>> GetListByUser(string userName);
+        Task<IEnumerable<MarketingTask>> GetListByUser(string userName,bool isHigherUser);
 
         /// <summary>
         /// Return a specific task with Subtask element 

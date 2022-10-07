@@ -1,5 +1,6 @@
 ﻿using Application.Core;
 using Core.Campaigns;
+using Infrastructure.External.Email;
 using Infrastructure.External.SMS;
 using System;
 using System.Collections.Generic;
@@ -13,36 +14,42 @@ namespace Infrastructure.Services
     {
        
         private readonly ISMSService _smsService;
+        private readonly ISendSMTPClient _sendSMTPClient;
 
-        public ActivityService(ISMSService smsService)
-        {   
+        public ActivityService(ISMSService smsService,
+            ISendSMTPClient sendSMTPClient) {   
             _smsService = smsService;
+            _sendSMTPClient = sendSMTPClient;
         }
 
-        public async Task<Activity> CreateBulkSMS(string title, string description, List<string> mobileNos, string message, DateTime? sendDate)
-        {
-            List<MessageResource> messageResources = new List<MessageResource>();
+        public async Task<bool> CreateBulkSMS(List<string> mobileNos, string message) {
             
-            Activity activity = null;
-            if(sendDate.HasValue && sendDate.Value > DateTime.Now)
-            {
-                activity = Activity.CreateSMSActivity(title, description, message, DateTime.Now, sendDate);
-                activity.Status = "pending";
-            } 
-            else
-            {
-                //start sending the message
-                foreach (var mobileNo in mobileNos)
-                {
-                    MessageResource messageBroker = await _smsService
-                                .SendSMS(new Core.SMSFormValue(mobileNo, "", message));
-                }
-                activity = Activity.CreateSMSActivity(title, description, message, DateTime.Now, sendDate);
+            List<MessageResource> messageResources = new List<MessageResource>();
+
+            //start sending the message
+            foreach (var mobileNo in mobileNos) {
+                MessageResource messageBroker = await _smsService
+                            .SendSMS(new Core.SMSFormValue(mobileNo, "", message));
             }
 
-            return activity;
+            return true;
+
         }
 
-       
+        public async Task<bool> CreateEmail(List<string> emailAdds, string subject, string body) {
+            
+            foreach (var email in emailAdds)
+            {
+                var emailParam = new EmailParameter {
+                    Subject = subject,
+                    Body = body,
+                    To = email
+                };
+
+                await _sendSMTPClient.SendEmailAsync(emailParam);
+            }
+
+            return true;
+        }
     }
 }

@@ -1,5 +1,6 @@
 using API.Extensions;
 using Application.Core;
+using Application.Extensions;
 using Infrastructure.External.Credential;
 using Infrastructure.External.SMS;
 using Infrastructure.Services;
@@ -23,16 +24,13 @@ namespace API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+
             
             services.AddDefaultServices(Configuration);
             services.AddApplicationServices(Configuration);
             services.AddIdentityServices(Configuration);
 
-            //add infrastructure twilio
-            services.Configure<TwilioSettings>(Configuration.GetSection("TwilioSMSKey"));
-            services.AddScoped<ISMSService, TwilioSMS>();
-            services.AddScoped<IActivityService, ActivityService>();
-            services.AddScoped<IUserAccessorService,UserAccessorService>();
+           
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

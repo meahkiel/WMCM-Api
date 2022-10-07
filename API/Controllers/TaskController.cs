@@ -15,8 +15,7 @@ namespace API.Controllers
         {
 
         }
-
-        [Authorize(Roles = "manager")]
+        
         [HttpGet]
         public async Task<IActionResult> GetTasks()
         {  

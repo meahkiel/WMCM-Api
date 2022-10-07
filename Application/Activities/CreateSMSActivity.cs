@@ -11,6 +11,10 @@ using System.Threading.Tasks;
 
 namespace Application.Activities
 {
+
+    /// <summary>
+    /// Deprecated
+    /// </summary>
     public class CreateSMSActivity
     {
         public class Command : IRequest<Result<Unit>>
@@ -30,22 +34,30 @@ namespace Application.Activities
             {
                 _activityService = activityService;
                 _context = context;
-               
             }
+
+
+            
+
             public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
             {
                 try
                 {
 
-                    var campaign = await _context.CampaignRepo.GetSingleCampaign(request.SMSActivity.CampaignId); 
-
+                    var campaign = await _context.CampaignRepo
+                                                .GetSingleCampaign(request.SMSActivity.CampaignId); 
+                    
                     //do not create if campaign is invalid
                     if (campaign == null)
                         throw new Exception("campaign doesn't exist");
 
-                    var contacts = await _context.Customers.GetContactByGroup(request.SMSActivity.Group);
+                    var contacts = await _context.Customers
+                                            .GetContactByGroup(request.SMSActivity.Group);
+                    
                     ContactSerialize serialize = new ContactSerialize(contacts.ToList(),request.SMSActivity.MobileNos);
+                    
                     List<string> mobileNos = serialize.ExtractSMS();
+                    
                     string description = request.SMSActivity.Group +
                                         (!string.IsNullOrEmpty(request.SMSActivity.MobileNos) ? request.SMSActivity.MobileNos : "");
                     
@@ -57,6 +69,7 @@ namespace Application.Activities
                     _context.CampaignRepo.Update(campaign);
                     
                     var result = await _context.SaveChangesAsync();
+                    
                     if(!result)
                     {
                         throw new Exception("Error on campaign");

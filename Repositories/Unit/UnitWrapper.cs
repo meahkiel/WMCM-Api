@@ -70,6 +70,11 @@ namespace Repositories.Unit
             }
         }
 
+        public DataContext GetContext()
+        {
+            return _context;
+        }
+
 
         public async Task<bool> SaveChangesAsync()
         {

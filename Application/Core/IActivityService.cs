@@ -7,7 +7,8 @@ namespace Application.Core
 {
     public interface IActivityService
     {
-        Task<Activity> CreateBulkSMS(string title, string description, List<string> mobileNos, string message, DateTime? sendDate);
+        Task<bool> CreateBulkSMS(List<string> mobileNos, string message);
 
+        Task<bool> CreateEmail(List<string> emailAdds, string subject, string body);
     }
 }
