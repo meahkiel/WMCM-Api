@@ -23,12 +23,14 @@ namespace API.Services
         public string CreateToken(AppUser user,string userRole)
         {
 
+            
             var claims = new List<Claim> {
                 new Claim(ClaimTypes.Name,user.UserName),
                 new Claim(ClaimTypes.NameIdentifier,user.Id),
                 new Claim(ClaimTypes.Email,user.Email),
                 new Claim(ClaimTypes.Role, userRole)
             };
+
             var configValue = _config.GetValue<string>("TokenKey");
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configValue));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);

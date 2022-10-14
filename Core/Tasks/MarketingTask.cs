@@ -21,33 +21,14 @@ namespace Core.Tasks
        
         public ICollection<SubTask> SubTasks {get;set; } = new List<SubTask>();
 
-        public void AddSubTask(string task,string assignedTo)
+        public void AddSubTask(string task,string assignedTo,string assignedBy)
         {       
-            SubTasks.Add(new SubTask {Id = Guid.NewGuid(), Task = task, AssignedTo = assignedTo, Status = StatusEnum.Todo.ToString() });
+            SubTasks.Add(new SubTask {Id = Guid.NewGuid(), Task = task, AssignedTo = assignedTo,AssignedBy = assignedBy, Status = StatusEnum.Todo.ToString() });
         }
 
         
 
-        public void AttachSubTaskRange(List<SubTask> subTasks)
-        {
-            foreach(var subTask in subTasks)
-            {
-                var existing = SubTasks.Where(s => s.Id == subTask.Id).FirstOrDefault();
-
-                if (existing != null)
-                {
-                    existing = new SubTask { 
-                        Id = existing.Id,
-                        Task = subTask.Task, 
-                        AssignedTo = subTask.AssignedTo, 
-                        Status = subTask.Status };
-                }
-                else
-                {
-                    AddSubTask(subTask.Task,subTask.AssignedTo);
-                }
-            }
-        }
+       
 
 
     }

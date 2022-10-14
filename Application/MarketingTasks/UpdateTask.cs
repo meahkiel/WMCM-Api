@@ -1,8 +1,10 @@
 ﻿using Application.Core;
 using Application.DTOs;
 using AutoMapper;
+using Core.Enum;
 using Core.Tasks;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Repositories.Unit;
 using System;
 using System.Collections.Generic;
@@ -21,10 +23,12 @@ namespace Application.MarketingTasks
         {
             private readonly UnitWrapper _context;
             private readonly IMapper _mapper;
-            public CommandHandler(UnitWrapper context, IMapper mapper)
+            private readonly IUserAccessorService _userAccessorService;
+            public CommandHandler(UnitWrapper context, IMapper mapper,IUserAccessorService userAccessorService)
             {
                 _context = context;
                 _mapper = mapper;
+                _userAccessorService = userAccessorService; 
 
             }
             public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
@@ -34,23 +38,66 @@ namespace Application.MarketingTasks
                 {
                     var subTasks = new List<SubTask>();
 
-                    request.MarketingTask.SubTasks.ForEach(task =>
-                    {
-                        var subTask = new SubTask {
-                            AssignedTo = task.AssignedTo,
-                            Task = task.Task,
-                            Status = task.Status,
-                        };
+                    var marketingTask = await 
+                        _context.Marketings.MarketingTasks
+                                .Include(s => s.SubTasks)
+                                .Where(m => m.Id == request.MarketingTask.Id)
+                                .SingleOrDefaultAsync();
 
-                        if (!string.IsNullOrEmpty(task.Id)) {
-                            subTask.Id = Guid.Parse(task.Id);
+                    if (marketingTask == null) {
+                        throw new Exception("Error Task");
+                    }
+
+                    var roles = await _userAccessorService.GetUserRole();
+                    var currentUser = _userAccessorService.GetUsername();
+                    foreach (var task in request.MarketingTask.SubTasks)
+                    {   
+                        if (marketingTask.SubTasks.Count == 0 || string.IsNullOrEmpty(task.Id))
+                        {
+                           
+                            //add it
+                            var subTask = new SubTask
+                            {
+                                Id = Guid.NewGuid(),
+                                AssignedTo = (roles.FirstOrDefault() == RoleEnum.Manager.ToString().ToLower()) ? task.AssignedTo : currentUser,
+                                AssignedBy = currentUser,
+                                Task = task.Task,
+                                Status = StatusEnum.Todo.ToString(),
+                                MarketingTask = marketingTask
+                            };
+                            _context.Marketings.AddSubTask(subTask);
                         }
+                        else
+                        {   
+                            var subTask = marketingTask.SubTasks
+                                                .Where(s => s.Id == Guid.Parse(task.Id))
+                                                .FirstOrDefault();
+                            if (task.MarkDelete)
+                            {
+                                if(subTask.AssignedBy == currentUser
+                                    || subTask.AssignedTo == currentUser)
+                                {
+                                    _context.Marketings.DeleteUpdateSubTask(subTask);
+                                }
+                            }
+                            else
+                            {
+                                if(roles.FirstOrDefault() == RoleEnum.Manager.ToString().ToLower())
+                                {
+                                    subTask.AssignedTo = task.AssignedTo;
+                                }
 
-                        subTasks.Add(subTask);
-                    });
+                                if(subTask.AssignedBy == currentUser) {
+                                    subTask.Task = task.Task;
+                                }
 
+                                subTask.Status = task.Status;
+                                _context.Marketings.UpdateSubTask(subTask);
+                            }
 
-                    await _context.Marketings.CreateUpdateSubTask(request.MarketingTask.Id, subTasks);
+                        }
+                    }
+                    
                     var result = await _context.SaveChangesAsync();
 
                     if (!result)

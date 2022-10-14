@@ -33,8 +33,12 @@ namespace Repositories.Marketing
         Task<MarketingTask> GetSubTask(Guid taskId, string userName);
 
         Task<bool> CreateUpdateSubTask(Guid taskId,IList<SubTask> subTasks);
-        
+        void AddSubTask(SubTask subTask);
+        void UpdateSubTask(SubTask subTask);
 
+        void DeleteUpdateSubTask(SubTask subtask);
+
+        IQueryable<MarketingTask> MarketingTasks { get; }
         
 
     }

@@ -23,6 +23,8 @@ namespace Core.Tasks
 
         public string AssignedTo { get; set; } = null;
 
+        public string AssignedBy { get; set; }
+
         public string Status { get; set; } = "";
 
         public void UpdateStatus(StatusEnum value)

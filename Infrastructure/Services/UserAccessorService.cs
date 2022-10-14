@@ -29,7 +29,9 @@ namespace Infrastructure.Services
 
         public async Task<IList<string>> GetUserRole()
         {
-            string userName =  _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.Name);
+            string userName =  _httpContextAccessor
+                                    .HttpContext.User
+                                    .FindFirstValue(ClaimTypes.Name);
 
             return await _userManager.GetRolesAsync(await _userManager.FindByNameAsync(userName));
         }

@@ -84,8 +84,8 @@ namespace Persistence.Seeds
                     UserName = "bob"
                 };
 
-                task.AddSubTask("Make a concept for graphics", "des");
-                task.AddSubTask("Contact the IT for the preparation of contact list", "staff");
+                task.AddSubTask("Make a concept for graphics", "des", "bob");
+                task.AddSubTask("Contact the IT for the preparation of contact list", "staff","bob");
                 
                 context.MarketingTasks.Add(task);
                 
@@ -96,11 +96,7 @@ namespace Persistence.Seeds
 
         public static async Task DataSeedCampaign(DataContext context)
         {
-            //if (context.Campaigns.Any())
-            //{
-            //    context.Campaigns.RemoveRange(await context.Campaigns.ToListAsync());
-            //}
-
+           
             if (!context.Campaigns.Any())
             {
 
@@ -146,12 +142,20 @@ namespace Persistence.Seeds
                         UserName = "bob", Department="Marketing", Email="bob@testing.com"},
                     new AppUser() { DisplayName = "Designer1", JobTitle = "Graphic Designer",
                         UserName = "des", Department="Marketing", Email="des@testing.com"},
-                    new AppUser() { DisplayName = "Staff1", JobTitle="Staff", UserName = "staff", Email="staff@testing.com"}
-
+                    new AppUser() { DisplayName = "Staff1", JobTitle="Staff", UserName = "staff", Email="staff@testing.com"},
+                    new AppUser() { DisplayName = "Staff2", JobTitle="Staff", UserName = "staff2", Email="staff@testing.com"}
                 };
-                foreach (var user in users)
+                try
                 {
-                    await userManager.CreateAsync(user, "Pa$$w0rd");
+                    foreach (var user in users)
+                    {
+                        await userManager.CreateAsync(user, "Pa$$w0rd");
+                    }
+
+                }
+                catch(Exception e)
+                {
+
                 }
             }
             else
@@ -162,18 +166,17 @@ namespace Persistence.Seeds
                 {
                     if(user.UserName == "bob")
                     {
-                        var result = await userManager.RemoveFromRoleAsync(user, RoleEnum.Admin.ToString().ToLower());
+                        await userManager.AddToRoleAsync(user, RoleEnum.Manager.ToString().ToLower());
 
-                        //await userManager.AddToRoleAsync(user,RoleEnum.Admin.ToString().ToLower());
-                        //await userManager.AddToRoleAsync(user, RoleEnum.Manager.ToString().ToLower());
+
                     }
                     else if(user.UserName == "admin")
                     {
-                        var result = await userManager.RemoveFromRoleAsync(user, RoleEnum.Staff.ToString().ToLower());
+                        await userManager.AddToRoleAsync(user, RoleEnum.Admin.ToString().ToLower());
                     }
                     else
                     {
-                        //await userManager.AddToRoleAsync(user,RoleEnum.Staff.ToString().ToLower());
+                        await userManager.AddToRoleAsync(user,RoleEnum.Staff.ToString().ToLower());
                     }
                 }
             }

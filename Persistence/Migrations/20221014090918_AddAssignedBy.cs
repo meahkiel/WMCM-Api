@@ -2,22 +2,22 @@
 
 namespace Persistence.Migrations
 {
-    public partial class AddSubjectforemailactivity : Migration
+    public partial class AddAssignedBy : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<string>(
-                name: "Subject",
-                table: "Activities",
-                type: "TEXT",
+                name: "AssignedBy",
+                table: "SubTask",
+                type: "text",
                 nullable: true);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "Subject",
-                table: "Activities");
+                name: "AssignedBy",
+                table: "SubTask");
         }
     }
 }

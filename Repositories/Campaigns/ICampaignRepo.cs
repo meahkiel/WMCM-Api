@@ -13,6 +13,9 @@ namespace Repositories.Campaigns
     {
         Task<IEnumerable<Campaign>> GetActiveCampaigns();
         Task<Campaign> GetSingleCampaign(Guid id);
+
+        
+
         
     }
 }

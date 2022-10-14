@@ -29,7 +29,10 @@ namespace Repositories.Campaigns
 
         public async Task<IEnumerable<Campaign>> GetActiveCampaigns()
         {
-            return  await _context.Campaigns.ToListAsync();
+            return await _context.Campaigns
+                .Include(c => c.Activities)
+                .Where(c => c.DateFrom <= DateTime.Now && c.DateTo >= DateTime.Now)
+                .ToListAsync();
         }
 
         public async Task<Campaign> GetSingleCampaign(Guid id)
@@ -48,5 +51,7 @@ namespace Repositories.Campaigns
         {
             _context.Update(entity);
         }
+
+        
     }
 }

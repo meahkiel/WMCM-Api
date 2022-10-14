@@ -13,6 +13,8 @@ namespace Repositories.Marketing
     {
         private readonly DataContext _context;
 
+        public IQueryable<MarketingTask> MarketingTasks => _context.MarketingTasks;
+
         public MarketingRepo(DataContext context)
         {
             _context = context;
@@ -43,7 +45,12 @@ namespace Repositories.Marketing
                                 Id = m.Id,
                                 UserName = m.UserName,
                                 SubTasks = m.SubTasks
-                                                .Select(s => new SubTask { AssignedTo = s.AssignedTo }).ToList()
+                                                .Select(s => new SubTask {
+                                                    Task = s.Task,
+                                                    Id = s.Id,
+                                                    Status = s.Status,
+                                                    AssignedTo = s.AssignedTo, 
+                                                    AssignedBy = s.AssignedBy }).ToList()
                             })
                             .ToListAsync();
             }
@@ -59,7 +66,14 @@ namespace Repositories.Marketing
                                 Id = m.Id,
                                 UserName = m.UserName,
                                 SubTasks = m.SubTasks
-                                                .Select(s => new SubTask { AssignedTo = s.AssignedTo }).ToList()
+                                                .Select(s => new SubTask
+                                                {
+                                                    Task = s.Task,
+                                                    Id = s.Id,
+                                                    Status= s.Status,   
+                                                    AssignedTo = s.AssignedTo,
+                                                    AssignedBy = s.AssignedBy
+                                                }).ToList()
                             })
                             .ToListAsync();
             }
@@ -71,7 +85,6 @@ namespace Repositories.Marketing
         {
             return await _context.MarketingTasks
                             .Include(t => t.SubTasks)
-                            .ThenInclude(s => s.Comments)
                             .SingleAsync(c => c.Id == taskId);
         }
 
@@ -96,7 +109,7 @@ namespace Repositories.Marketing
         {
             _context.MarketingTasks.Update(entity);
         }
-
+        
         public async Task<bool> CreateUpdateSubTask(Guid taskId, IList<SubTask> subTasks)
         {
 
@@ -141,6 +154,21 @@ namespace Repositories.Marketing
             }
 
             return true;
-        } 
+        }
+
+        public void AddSubTask(SubTask subTask)
+        {
+            _context.SubTasks.Add(subTask);
+        }
+
+        public  void DeleteUpdateSubTask(SubTask subtask)
+        {
+            _context.SubTasks.Remove(subtask);
+        }
+
+        public void UpdateSubTask(SubTask subTask)
+        {
+            _context.SubTasks.Update(subTask);
+        }
     }
 }
