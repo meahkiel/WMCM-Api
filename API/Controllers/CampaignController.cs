@@ -41,6 +41,14 @@ namespace API.Controllers
             return HandleResult(unit);
         }
 
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete([FromRoute]string id)
+        {
+            var unit = await _mediator.Send(new Delete.Command { Id = id });
+            
+            return HandleResult(unit);
+        }
+
         
     }
 }

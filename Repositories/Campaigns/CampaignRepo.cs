@@ -44,7 +44,7 @@ namespace Repositories.Campaigns
 
         public void Remove(Campaign entity)
         {
-            throw new NotImplementedException();
+            _context.Campaigns.Remove(entity);
         }
 
         public void Update(Campaign entity)

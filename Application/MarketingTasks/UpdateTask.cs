@@ -9,7 +9,6 @@ using Repositories.Unit;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -24,7 +23,8 @@ namespace Application.MarketingTasks
             private readonly UnitWrapper _context;
             private readonly IMapper _mapper;
             private readonly IUserAccessorService _userAccessorService;
-            public CommandHandler(UnitWrapper context, IMapper mapper,IUserAccessorService userAccessorService)
+            public CommandHandler(UnitWrapper context, IMapper mapper,
+                IUserAccessorService userAccessorService)
             {
                 _context = context;
                 _mapper = mapper;
@@ -50,6 +50,7 @@ namespace Application.MarketingTasks
 
                     var roles = await _userAccessorService.GetUserRole();
                     var currentUser = _userAccessorService.GetUsername();
+
                     foreach (var task in request.MarketingTask.SubTasks)
                     {   
                         if (marketingTask.SubTasks.Count == 0 || string.IsNullOrEmpty(task.Id))
