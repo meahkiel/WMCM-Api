@@ -6,7 +6,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Persistence.Context;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
@@ -15,6 +17,7 @@ using System.Threading.Tasks;
 namespace API.Controllers
 {
 
+    [Authorize(Roles = "admin,manager")]
     [Route("api/[controller]")]
     [ApiController]
     public class AccountController : ControllerBase
@@ -57,35 +60,73 @@ namespace API.Controllers
             return Unauthorized("Incorrect Password");
         }
 
-       
 
+        
         [HttpPost("register")]
         public async Task<ActionResult<UserDto>> Register(RegisterDto registerDto)
         {
-            if(await _userManager.Users.AnyAsync(u => u.UserName == registerDto.Username)) {
-                return BadRequest("Username already taken");
-            }
-
-            var user = new AppUser
+            var user = new AppUser();
+            IdentityResult result;
+            if (!String.IsNullOrEmpty(registerDto.Id))
             {
-                DisplayName = registerDto.DisplayName,
-                Email = registerDto.Email,
-                UserName = registerDto.Username,
-                JobTitle = registerDto.JobTitle,
-                Department = registerDto.Department
-            };
-
-            var result = await _userManager.CreateAsync(user,registerDto.Password);
+                user = await _userManager.FindByIdAsync(registerDto.Id);
+                if(user == null)
+                    return BadRequest("User is not recognized");
+                
+                user.Department = registerDto.Department;
+                user.Email = registerDto.Email;
+                user.JobTitle = registerDto.JobTitle;
+                if(!string.IsNullOrEmpty(registerDto.Password)) {
+                    user.PasswordHash = _userManager.PasswordHasher.HashPassword(user,registerDto.Password);
+                }
+                result = await _userManager.UpdateAsync(user);
+            }
+            else
+            {
+                if (await _userManager.Users.AnyAsync(u => u.UserName == registerDto.Username)) {
+                    return BadRequest("Username already taken");
+                }
+                user = new AppUser
+                {
+                    DisplayName = registerDto.DisplayName,
+                    Email = registerDto.Email,
+                    UserName = registerDto.Username,
+                    JobTitle = registerDto.JobTitle,
+                    Department = registerDto.Department
+                };
+                result = await _userManager.CreateAsync(user, registerDto.Password);
+            }
+            
 
             if(result.Succeeded) {
                 
-                await _userManager.AddToRoleAsync(user, registerDto.UserRole);
-                IList<string> userRoles = new List<string> { registerDto.UserRole };
+                await _userManager.AddToRoleAsync(user, registerDto.Role);
+                IList<string> userRoles = new List<string> { registerDto.Role };
 
                 return CreateUser(user,userRoles);
             }
 
             return BadRequest("Problem in registering user");
+        }
+
+        [HttpPut("update")]
+        public async Task<IActionResult> Update(RegisterDto register)
+        {
+            try
+            {
+                var user = await _userManager.FindByNameAsync(register.Username);
+                if (user == null)
+                    throw new Exception("User cannot find");
+                
+                await _userManager.UpdateAsync(user);
+
+                return Ok();
+            }
+            catch(Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+                
         }
         
         [HttpGet("user")]
@@ -117,8 +158,10 @@ namespace API.Controllers
         {
             return new UserDto
             {
+                Id = user.Id,
                 DisplayName = user.DisplayName,
                 JobTitle = user.JobTitle,
+                Email = user.Email, 
                 Token = _tokenService.CreateToken(user,roles[0]),
                 Username = user.UserName,
                 Department = user.Department,
