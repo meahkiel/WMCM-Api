@@ -1,5 +1,6 @@
 ﻿using Persistence.Context;
 using Repositories.Campaigns;
+using Repositories.Channels;
 using Repositories.Customer;
 using Repositories.Marketing;
 using Repositories.Templates;
@@ -15,6 +16,8 @@ namespace Repositories.Unit
         private ICustomerRepo _customer;
         private ICampaignRepo _campaign;
         private ITemplateRepo _template;
+        private IChannelRepo _channel;
+
 
         private readonly DataContext _context;
 
@@ -67,6 +70,18 @@ namespace Repositories.Unit
                     _template = new TemplateRepo(_context);
                 }
                 return _template;
+            }
+        }
+
+        public IChannelRepo Channels
+        {
+            get
+            {
+                if (_channel == null)
+                {
+                    _channel = new ChannelRepo(_context);
+                }
+                return _channel;
             }
         }
 

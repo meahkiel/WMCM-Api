@@ -76,9 +76,19 @@ namespace API.Controllers
                 user.Department = registerDto.Department;
                 user.Email = registerDto.Email;
                 user.JobTitle = registerDto.JobTitle;
+
                 if(!string.IsNullOrEmpty(registerDto.Password)) {
                     user.PasswordHash = _userManager.PasswordHasher.HashPassword(user,registerDto.Password);
                 }
+
+                var currentRoles = await _userManager.GetRolesAsync(user);
+                if(!currentRoles.Any(r => r == registerDto.Role))
+                {
+
+                    await _userManager.RemoveFromRoleAsync(user, currentRoles.FirstOrDefault());
+                    await _userManager.AddToRoleAsync(user, registerDto.Role);
+                }
+                
                 result = await _userManager.UpdateAsync(user);
             }
             else

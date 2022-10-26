@@ -1,5 +1,7 @@
-﻿using Application.Core;
+﻿using Application.Channels;
+using Application.Core;
 using MailKit.Net.Smtp;
+using MediatR;
 using Microsoft.Extensions.Options;
 using MimeKit;
 using System;
@@ -27,33 +29,50 @@ namespace Infrastructure.External.Email
     public class SendSMTPClient : ISendSMTPClient
     {
 
-        private EmailSetting _emailSetting;
+        
+        private readonly IMediator _mediator;
 
-        public SendSMTPClient(IOptions<EmailSetting> settings)
+        public SendSMTPClient(IMediator mediator)
         {
-            _emailSetting = settings.Value;
+            
+            _mediator = mediator;
         }
        
         public async Task SendEmailAsync(EmailParameter parameter) {
-            var mimeMessage = new MimeMessage();
-            mimeMessage.From.Add(new MailboxAddress(_emailSetting.From, _emailSetting.From));
-            mimeMessage.To.Add(new MailboxAddress(parameter.To, parameter.To));
-            mimeMessage.Subject = parameter.Subject;
-            mimeMessage.Body = new TextPart("html")
-            {
-                Text = parameter.Body
-            };
 
-            await SendProcess(mimeMessage);
+            try
+            {
+
+                var mimeMessage = new MimeMessage();
+                var result = await _mediator.Send(new GetByType.Query{ Type = "email" });
+                var channel = result.Value;
+
+
+                mimeMessage.From.Add(new MailboxAddress(channel.Email, channel.Email));
+                mimeMessage.To.Add(new MailboxAddress(parameter.To, parameter.To));
+                mimeMessage.Subject = parameter.Subject;
+                mimeMessage.Body = new TextPart("html")
+                {
+                    Text = parameter.Body
+                };
+
+                await SendProcess(mimeMessage,channel.Host,
+                    channel.Port,channel.UserName,channel.Password);
+            }
+            catch(Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
 
         }
 
-        private async Task SendProcess(MimeMessage mimeMessage)
+        private async Task SendProcess(MimeMessage mimeMessage,string host,
+            int port,string username,string password)
         {
             using (var client = new SmtpClient())
             {
-                client.Connect(_emailSetting.Host, _emailSetting.Port, false);
-                client.Authenticate(_emailSetting.UserName, _emailSetting.Password);
+                client.Connect(host, port, false);
+                client.Authenticate(username, password);
                 await client.SendAsync(mimeMessage);
                 await client.DisconnectAsync(true);
             }

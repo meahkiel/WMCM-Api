@@ -1,4 +1,5 @@
 ﻿using Core.Campaigns;
+using Core.Channels;
 using Core.Contacts;
 using Core.Enum;
 using Core.Tasks;
@@ -71,6 +72,47 @@ namespace Persistence.Seeds
             await context.SaveChangesAsync();
         }
 
+        public static async Task DataSeedChannel(DataContext context)
+        {
+            if(!context.ChannelSettings.Any())
+            {
+                context.ChannelSettings.Add(new ChannelSetting
+                {
+                    Id = Guid.NewGuid(),
+                    Title = "Twilio SMS Channel",
+                    Description = "SMS Gateway for mobile messaging platform",
+                    Type = "twilio",
+                    ApiKey = "ACf2d0f5df971acd20300db7622599c714",
+                    ApiSecretKey = "ce9ae086ab718a6f57d4591bcfd43850",
+                    PhoneNo = "+14143480525"
+                });
+
+                context.ChannelSettings.Add(new ChannelSetting
+                {
+                    Id = Guid.NewGuid(),
+                    Title = "Email Channel",
+                    Description = "SMTP for sending email to your clients",
+                    Type = "email",
+                    Host = "smtp.mailtrap.io",
+                    Port = 587,
+                    UserName = "f7ec880bd97b60",
+                    Password = "afb194bcb87e65",
+                    Email = "arguimercado@gmail.com"
+                });
+
+                context.ChannelSettings.Add(new ChannelSetting
+                {
+                    Id = Guid.NewGuid(),
+                    Title = "Web Campaign Posting",
+                    Description = "Website campaign create a post to your Company Website",
+                    Type = "website",
+                    BaseUrl = "ama-def-rg.azure.net",
+                    Header = "application/json"
+                });
+
+                await context.SaveChangesAsync();
+            }
+        }
 
         public static async Task DataSeedTask(DataContext context)
         {

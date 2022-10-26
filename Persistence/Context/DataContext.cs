@@ -1,4 +1,5 @@
 ﻿using Core.Campaigns;
+using Core.Channels;
 using Core.Contacts;
 using Core.Extensions;
 using Core.Tasks;
@@ -23,6 +24,9 @@ namespace Persistence.Context
         public DbSet<MarketingTask> MarketingTasks { get; set; }
         public DbSet<SubTask> SubTasks { get; set; }
 
+        public DbSet<ChannelSetting> ChannelSettings { get; set; }
+
+
         public DataContext(DbContextOptions options) : base(options)
         {
             
@@ -32,6 +36,8 @@ namespace Persistence.Context
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            
 
             modelBuilder.Entity<Contact>()
                 .HasKey(t => t.Id);
@@ -49,6 +55,8 @@ namespace Persistence.Context
             modelBuilder.Entity<Activity>()
                 .HasMany(a => a.Details)
                 .WithOne(a => a.Activity);
+
+            modelBuilder.Entity<ChannelSetting>().HasKey(c => c.Id);
 
            
             modelBuilder.ApplyConfiguration(new MarketingTaskConfiguration());

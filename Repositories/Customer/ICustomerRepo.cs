@@ -12,6 +12,7 @@ namespace Repositories.Customer
     {
        
         Task<Contact> GetSingle(Guid id);
+
         Task<IEnumerable<Contact>> GetActives();
         Task<IEnumerable<Contact>> GetContactByGroup(string groupTag);
         Task<bool> Inactivate(Guid id);
