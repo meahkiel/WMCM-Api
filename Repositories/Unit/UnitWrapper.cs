@@ -3,6 +3,7 @@ using Repositories.Campaigns;
 using Repositories.Channels;
 using Repositories.Customer;
 using Repositories.Marketing;
+using Repositories.Notifications;
 using Repositories.Templates;
 using System;
 using System.Threading.Tasks;
@@ -17,6 +18,7 @@ namespace Repositories.Unit
         private ICampaignRepo _campaign;
         private ITemplateRepo _template;
         private IChannelRepo _channel;
+        private INotificationRepo _notification;
 
 
         private readonly DataContext _context;
@@ -88,6 +90,18 @@ namespace Repositories.Unit
         public DataContext GetContext()
         {
             return _context;
+        }
+
+        public INotificationRepo Notifications
+        {
+            get
+            {
+                if (_notification == null)
+                {
+                    _notification = new NotificationRepo(_context);
+                }
+                return _notification;
+            }
         }
 
 

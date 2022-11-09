@@ -24,6 +24,7 @@ namespace Application.MarketingTasks
             private readonly IMapper _mapper;
             private readonly IUserAccessorService _userAccessorService;
             
+
             public CommandHandler(UnitWrapper context,
                 IMapper mapper,
                 IUserAccessorService userAccessorService)
@@ -31,15 +32,15 @@ namespace Application.MarketingTasks
                 _context = context;
                 _mapper = mapper;
                 _userAccessorService = userAccessorService;
+               
             }
+
 
             public async Task<Result<Unit>> Handle(Command request, 
                 CancellationToken cancellationToken)
             {
                 try
                 {
-                    
-                    
                     IList<string> userRoles = await _userAccessorService.GetUserRole();
 
                     if (!userRoles.Any(u => u == RoleEnum.Manager.ToString().ToLower()))
@@ -52,8 +53,9 @@ namespace Application.MarketingTasks
                     marketing.UserName = _userAccessorService.GetUsername();
                     _context.Marketings.Add(marketing);
 
-                    var result = await _context.SaveChangesAsync();
-
+                    var result = await _context
+                                        .SaveChangesAsync();
+                    
                     if (!result)
                         throw new Exception("Unable to save");
 

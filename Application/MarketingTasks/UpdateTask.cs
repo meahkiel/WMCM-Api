@@ -24,13 +24,17 @@ namespace Application.MarketingTasks
             private readonly UnitWrapper _context;
             private readonly IMapper _mapper;
             private readonly IUserAccessorService _userAccessorService;
+            private readonly IPublisher _publisher;
+            private IList<NotifyTaskEvent> _notifyTaskEvents;
+
             public CommandHandler(UnitWrapper context, IMapper mapper,
-                IUserAccessorService userAccessorService)
+                IUserAccessorService userAccessorService,IPublisher publisher)
             {
                 _context = context;
                 _mapper = mapper;
-                _userAccessorService = userAccessorService; 
-
+                _userAccessorService = userAccessorService;
+                _publisher = publisher;
+                
             }
             public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
             {
@@ -39,6 +43,8 @@ namespace Application.MarketingTasks
                 {
                     var subTasks = new List<SubTask>();
 
+                    
+                    
                     var marketingTask = await 
                         _context.Marketings.MarketingTasks
                                 .Include(s => s.SubTasks)
@@ -51,7 +57,7 @@ namespace Application.MarketingTasks
 
                     var roles = await _userAccessorService.GetUserRole();
                     var currentUser = _userAccessorService.GetUsername();
-
+                    _notifyTaskEvents = new List<NotifyTaskEvent>();
                     foreach (var task in request.MarketingTask.SubTasks)
                     {   
                         if (marketingTask.SubTasks.Count == 0 || string.IsNullOrEmpty(task.Id))
@@ -68,6 +74,14 @@ namespace Application.MarketingTasks
                                 MarketingTask = marketingTask
                             };
                             _context.Marketings.AddSubTask(subTask);
+                            
+                            //raised an event
+                            _notifyTaskEvents.Add(new NotifyTaskEvent
+                            {
+                                Description = $"New Task Has been Created {subTask.Task}",
+                                Module = "Marketing Task",
+                                AssignedTo = subTask.AssignedTo
+                            });
                         }
                         else
                         {   
@@ -92,8 +106,20 @@ namespace Application.MarketingTasks
                                 if(subTask.AssignedBy == currentUser) {
                                     subTask.Task = task.Task;
                                 }
+                                if(subTask.Status != task.Status)
+                                {
+                                    subTask.Status = task.Status;
+                                    
+                                    //raised an event
+                                    _notifyTaskEvents.Add(new NotifyTaskEvent
+                                    {
+                                        Description = $"Task status has been updated by {subTask.AssignedTo}",
+                                        Module = "Marketing Task",
+                                        AssignedTo = subTask.AssignedBy
+                                    });
 
-                                subTask.Status = task.Status;
+                                }
+                                
                                 _context.Marketings.UpdateSubTask(subTask);
                             }
 
@@ -104,6 +130,17 @@ namespace Application.MarketingTasks
 
                     if (!result)
                         throw new Exception("Unable to Add or Update SubTask");
+
+
+                    //published the event
+                    if (_notifyTaskEvents.Count > 0)
+                    {
+                        foreach (var notificationEvent in _notifyTaskEvents)
+                        {
+                            await _publisher.Publish(notificationEvent);
+                        }
+                    }
+
                     return Result<Unit>.Success(Unit.Value);
                 }
                 catch (Exception ex)

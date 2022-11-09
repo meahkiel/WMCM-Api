@@ -49,7 +49,7 @@ namespace API.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete([FromRoute]string id)
         {
-            var unit = await     .Send(new Delete.Command { Id = id });
+            var unit = await _mediator.Send(new Delete.Command { Id = id });
             
             return HandleResult(unit);
         }
