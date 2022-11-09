@@ -9,5 +9,8 @@ namespace Core.Base
     public abstract class BaseEntity
     {
         public Guid Id { get; set; }
+        public bool InActive { get; set; } = false;
+
+
     }
 }

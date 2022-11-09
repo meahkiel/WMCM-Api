@@ -14,9 +14,7 @@ namespace Application.Campaigns
     {
         public class Command : IRequest<Result<CampaignDTO>>
         {
-
             public CampaignDTO Campaign { get; set; }
-
         }
 
         public class CommandHandler : IRequestHandler<Command, Result<CampaignDTO>>
@@ -30,8 +28,6 @@ namespace Application.Campaigns
                 _mapper = mapper;
             }
 
-         
-
             public async Task<Result<CampaignDTO>> Handle(Command request, CancellationToken cancellationToken)
             {
                 var campaign = _mapper.Map<Campaign>(request.Campaign);
@@ -40,9 +36,10 @@ namespace Application.Campaigns
 
                 try
                 {
+                    
                     var result = await _context.SaveChangesAsync();
-                    if (!result)
-                    {
+
+                    if (!result) {
                         throw new Exception("Failed to create campaign");
                     }
                     

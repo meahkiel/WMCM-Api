@@ -1,4 +1,5 @@
 using API.Extensions;
+using API.Middleware;
 using Application.Core;
 using Application.Extensions;
 using Infrastructure.External.Credential;
@@ -36,6 +37,9 @@ namespace API
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+
+            app.UseMiddleware<ExceptionMiddleware>();
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

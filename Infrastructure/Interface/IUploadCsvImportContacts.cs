@@ -5,10 +5,10 @@ using System.Threading.Tasks;
 using Application.Core;
 using MediatR;
 
-namespace Infrastructure.Services
+namespace Infrastructure.Interface
 {
     public interface IUploadCsvImportContacts
     {
-        Task<Result<Unit>> UploadCsvFile(UploadCsvFileRequest request,string path);
+        Task<Result<Unit>> UploadCsvFile(UploadCsvFileRequest request, string path);
     }
 }

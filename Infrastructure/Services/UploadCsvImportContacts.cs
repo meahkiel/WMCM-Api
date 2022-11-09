@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Application.Contacts;
 using MediatR;
 using Application.Core;
+using Infrastructure.Interface;
 
 namespace Infrastructure.Services
 {

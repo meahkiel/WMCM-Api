@@ -5,6 +5,7 @@ using MediatR;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Twilio;
 using Twilio.Rest.Api.V2010.Account;
@@ -15,49 +16,19 @@ namespace Infrastructure.External.SMS
     {
         
         private readonly IMediator _mediator;
+        public string ApiKey { get; set; }
+        public string ApiSecret { get; set; }
+       
 
-        public TwilioSMS(IMediator mediator)
-        {
-            
-            _mediator = mediator;
-        }
-
-        public async Task<bool> SendBulkSMSAsync(List<string> tos, string from, string message)
-        {
-            try {
-
-                var mResult = await _mediator.Send(new GetByType.Query { Type = "twilio" });
-                var channel = mResult.Value;
-
-                TwilioClient.Init(channel.ApiKey, channel.ApiSecretKey);
-                
-                foreach (var to in tos)
-                {
-                    var result = await MessageResource.CreateAsync(
-                                        body: message,
-                                        from: new Twilio.Types.PhoneNumber(channel.PhoneNo),
-                                        to: new Twilio.Types.PhoneNumber(to));
-                }
-
-                return true;
-
-            }
-            catch(Exception ex)
-            {
-                throw new Exception(ex.Message, ex);
-            }
-
-        }
 
         public async Task<MessageResource> SendSMS(SMSFormValue value)
         {
-            var mResult = await _mediator.Send(new GetByType.Query { Type = "twilio" });
-            var channel = mResult.Value;
-            TwilioClient.Init(channel.ApiKey, channel.ApiSecretKey);
+          
+            TwilioClient.Init(ApiKey, ApiSecret);
 
             var result = await MessageResource.CreateAsync(
                 body: value.Message,
-                from: new Twilio.Types.PhoneNumber(channel.PhoneNo),
+                from: new Twilio.Types.PhoneNumber(value.From),
                 to: new Twilio.Types.PhoneNumber(value.To));
 
             return result;

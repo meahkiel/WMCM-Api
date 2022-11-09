@@ -1,4 +1,4 @@
-﻿using Application.Core;
+﻿using Application.Interface;
 using Core.Users;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;

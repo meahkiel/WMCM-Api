@@ -31,7 +31,7 @@ namespace Repositories.Campaigns
         {
             return await _context.Campaigns
                 .Include(c => c.Activities)
-                .Where(c => c.DateFrom <= DateTime.Now && c.DateTo >= DateTime.Now)
+                //.Where(c => c.DateFrom <= DateTime.Now && c.DateTo >= DateTime.Now)
                 .ToListAsync();
         }
 

@@ -1,5 +1,6 @@
 ﻿using Application.Core;
 using Application.DTOs;
+using Application.Interface;
 using AutoMapper;
 using Core.Enum;
 using Core.Tasks;

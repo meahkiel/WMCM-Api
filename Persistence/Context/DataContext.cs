@@ -52,10 +52,7 @@ namespace Persistence.Context
                 .HasMany(c => c.Activities)
                 .WithOne(a => a.Campaign);
 
-            modelBuilder.Entity<Activity>()
-                .HasMany(a => a.Details)
-                .WithOne(a => a.Activity);
-
+           
             modelBuilder.Entity<ChannelSetting>().HasKey(c => c.Id);
 
            
@@ -77,7 +74,6 @@ namespace Persistence.Context
                     entry.Property("LastUpdatedOn").CurrentValue = timestamp;
                     if(entry.State == EntityState.Added)
                     {
-                        
                         entry.Property("CreatedOn").CurrentValue = timestamp;
                     }
                 }

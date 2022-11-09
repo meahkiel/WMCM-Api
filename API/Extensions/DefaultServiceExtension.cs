@@ -1,8 +1,12 @@
 ﻿
 using Application.Core;
+using Application.Interface;
+using Infrastructure.External.Clouds;
 using Infrastructure.External.Credential;
 using Infrastructure.External.Email;
 using Infrastructure.External.SMS;
+using Infrastructure.External.Web;
+using Infrastructure.Interface;
 using Infrastructure.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
@@ -21,8 +25,13 @@ namespace API.Extensions
             //add infrastructure twilio
             services.Configure<TwilioSettings>(configuration.GetSection("TwilioSMSKey"));
             services.Configure<EmailSetting>(configuration.GetSection("EmailSettings"));
+            services.Configure<CloudinarySettings>(configuration.GetSection("Cloudinary"));
+
+            services.AddScoped<IServiceFactory, ServiceFactory>();
             services.AddScoped<ISMSService, TwilioSMS>();
             services.AddScoped<ISendSMTPClient,SendSMTPClient>();
+            services.AddScoped<IWebPostService,WebPostService>();
+            services.AddScoped<IPhotoAccessor, PhotoAccessor>();
             services.AddScoped<IActivityService, ActivityService>();
             services.AddScoped<IUserAccessorService, UserAccessorService>();
             services.AddScoped<IUploadCsvImportContacts, UploadCsvImportContacts>();

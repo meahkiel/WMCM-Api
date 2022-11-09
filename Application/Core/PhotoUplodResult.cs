@@ -6,9 +6,10 @@ using System.Threading.Tasks;
 
 namespace Application.Core
 {
-    public interface IUserAccessorService
+    public class PhotoUplodResult
     {
-        string GetUsername();
-        Task<IList<string>> GetUserRole();
+        public string PublicId { get; set; }
+        public string Url { get; set; }
+
     }
 }

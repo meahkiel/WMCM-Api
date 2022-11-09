@@ -7,7 +7,10 @@ namespace Infrastructure.External.SMS
 {
     public interface ISMSService
     {
+        public string ApiKey { get; set; }
+        public string ApiSecret { get; set; }
+
         Task<MessageResource> SendSMS(SMSFormValue value);
-        Task<bool> SendBulkSMSAsync(List<string> tos, string from, string message);
+       
     }
 }

@@ -1,8 +1,8 @@
 ﻿using Application.Contacts;
 using Application.Core;
 using Application.DTO;
+using Application.Interface;
 using Core.Campaigns;
-using Core.Contacts;
 using MediatR;
 using Repositories.Unit;
 using System;
@@ -15,7 +15,6 @@ namespace Application.Activities
 {
     public class SendActivity
     {
-
 
         public class Command : IRequest<Result<Unit>>
         {
@@ -36,32 +35,39 @@ namespace Application.Activities
 
             }
 
-            private async Task<Activity> CreateSMSActivity(IEnumerable<Contact> contacts,ActivityEntryDTO entry)
+            
+            
+
+            private async Task<Activity> CreateSMSActivity(ActivityEntryDTO entry)
             {
-                
+
+                var contacts = await _context.Customers.GetContactByGroup(entry.ToGroup);
                 ContactSerialize serialize = new ContactSerialize(contacts.ToList(), entry.ToGroup);
                 List<string> mobileNos = serialize.ExtractSMS();
+                var strmobileNos = string.Join(",", mobileNos.ToArray());
                 
                 string description = entry.ToGroup +
                                 (!string.IsNullOrEmpty(entry.ToGroup) ? entry.ToGroup : "");
                 
                 await _activityService.CreateBulkSMS(mobileNos, entry.Body);
 
-                return Activity.CreateSMSActivity(entry.Title, entry.ToGroup, entry.Body, DateTime.Now, null);
+                return Activity.CreateSMSActivity(entry.Title, strmobileNos, entry.Body, DateTime.Now, null);
 
             } 
 
-            private async Task<Activity> CreateEmailActivity(IEnumerable<Contact> contacts,ActivityEntryDTO entry)
+            private async Task<Activity> CreateEmailActivity(ActivityEntryDTO entry)
             {
+                var contacts = await _context.Customers.GetContactByGroup(entry.ToGroup);
                 ContactSerialize serialize = new ContactSerialize(contacts.ToList(), entry.To);
                 
                 List<string> emailAddress = serialize.ExtractEmail();
-                string description = $"Send Email to  {string.Join(",", emailAddress.ToArray())}"; 
+                var strEmailAddress = string.Join(",", emailAddress.ToArray());
+                string description = $"Send Email to  {strEmailAddress}"; 
                               
 
                 await _activityService.CreateEmail(emailAddress, entry.Subject, entry.Body);
 
-                return Activity.CreateEmailActivity(entry.Subject,description,entry.Subject,entry.Body,DateTime.Now, null);
+                return Activity.CreateEmailActivity(entry.Subject,description,entry.Subject,entry.Body,DateTime.Now,strEmailAddress);
 
             }
 
@@ -76,18 +82,21 @@ namespace Application.Activities
                     //do not create if campaign is invalid
                     if (campaign == null)
                         throw new Exception("campaign doesn't exist");
-
-                    var contacts = await _context.Customers.GetContactByGroup(request.Entry.ToGroup);
                     
                     Activity activity = null;
-
-                    if(request.Entry.Type.ToLower() == "sms") {
-                      activity = await CreateSMSActivity(contacts,request.Entry);
-                    } 
-                    else if (request.Entry.Type.ToLower() == "email") {
-                        activity = await CreateEmailActivity(contacts, request.Entry);
+                    switch(request.Entry.Type.ToLower())
+                    {
+                        case "sms":
+                            activity = await CreateSMSActivity(request.Entry);
+                            break;
+                        case "email":
+                            activity = await CreateEmailActivity(request.Entry);
+                            break;
+                        case "web":
+                           
+                            break;
                     }
-
+                   
                     if(activity != null)
                     {
                         campaign.AddActivity(activity);

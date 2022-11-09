@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Persistence.Context;
@@ -9,9 +10,10 @@ using Persistence.Context;
 namespace Persistence.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20221031173858_Update Campaign Activity")]
+    partial class UpdateCampaignActivity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -37,26 +39,11 @@ namespace Persistence.Migrations
                     b.Property<DateTime?>("DateSchedule")
                         .HasColumnType("timestamp without time zone");
 
-                    b.Property<int>("Days")
-                        .HasColumnType("integer");
-
                     b.Property<string>("Description")
                         .HasColumnType("text");
 
                     b.Property<DateTime>("DispatchDate")
                         .HasColumnType("timestamp without time zone");
-
-                    b.Property<string>("EmailCc")
-                        .HasColumnType("text");
-
-                    b.Property<string>("From")
-                        .HasColumnType("text");
-
-                    b.Property<bool>("InActive")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("IsRecurrent")
-                        .HasColumnType("boolean");
 
                     b.Property<string>("Status")
                         .HasColumnType("text");
@@ -80,6 +67,31 @@ namespace Persistence.Migrations
                     b.ToTable("Activities");
                 });
 
+            modelBuilder.Entity("Core.Campaigns.ActivityDetail", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("ActivityId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Key")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Type")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Value")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ActivityId");
+
+                    b.ToTable("ActivityDetail");
+                });
+
             modelBuilder.Entity("Core.Campaigns.Campaign", b =>
                 {
                     b.Property<Guid>("Id")
@@ -94,9 +106,6 @@ namespace Persistence.Migrations
 
                     b.Property<string>("Description")
                         .HasColumnType("text");
-
-                    b.Property<bool>("InActive")
-                        .HasColumnType("boolean");
 
                     b.Property<string>("Title")
                         .HasColumnType("text");
@@ -203,9 +212,6 @@ namespace Persistence.Migrations
                     b.Property<string>("GroupTag")
                         .HasColumnType("text");
 
-                    b.Property<bool>("InActive")
-                        .HasColumnType("boolean");
-
                     b.Property<string>("LastName")
                         .HasColumnType("text");
 
@@ -241,9 +247,6 @@ namespace Persistence.Migrations
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("timestamp without time zone");
 
-                    b.Property<bool>("InActive")
-                        .HasColumnType("boolean");
-
                     b.Property<DateTime>("LastUpdatedOn")
                         .HasColumnType("timestamp without time zone");
 
@@ -271,9 +274,6 @@ namespace Persistence.Migrations
 
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("timestamp without time zone");
-
-                    b.Property<bool>("InActive")
-                        .HasColumnType("boolean");
 
                     b.Property<DateTime>("LastUpdatedOn")
                         .HasColumnType("timestamp without time zone");
@@ -303,9 +303,6 @@ namespace Persistence.Migrations
 
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("timestamp without time zone");
-
-                    b.Property<bool>("InActive")
-                        .HasColumnType("boolean");
 
                     b.Property<DateTime>("LastUpdatedOn")
                         .HasColumnType("timestamp without time zone");
@@ -564,6 +561,15 @@ namespace Persistence.Migrations
                     b.Navigation("Campaign");
                 });
 
+            modelBuilder.Entity("Core.Campaigns.ActivityDetail", b =>
+                {
+                    b.HasOne("Core.Campaigns.Activity", "Activity")
+                        .WithMany("Details")
+                        .HasForeignKey("ActivityId");
+
+                    b.Navigation("Activity");
+                });
+
             modelBuilder.Entity("Core.Tasks.Comment", b =>
                 {
                     b.HasOne("Core.Tasks.SubTask", "SubTask")
@@ -640,6 +646,11 @@ namespace Persistence.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Core.Campaigns.Activity", b =>
+                {
+                    b.Navigation("Details");
                 });
 
             modelBuilder.Entity("Core.Campaigns.Campaign", b =>

@@ -1,4 +1,5 @@
 ﻿using Core.Campaigns;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,7 +20,9 @@ namespace Application.DTO
         public string Description { 
             get { return TruncateAtWord(_description, 180); } set { _description = value; } }
         public DateTime? DateToSend { get; set; }
-       
+        public bool IsRecurrent { get; set; } = false;
+        public int Days { get; set; } = 0;
+
         public string Type { get; set; }
         public string ToGroup { get; set; }
         public string To { get; set; }
@@ -28,7 +31,9 @@ namespace Application.DTO
 
         public string Subject { get; set; }
         public string Body { get; set; }
-       
+
+        public string CoverImage { get; set; }
+        public IFormFile CoverImageFile { get; set; }
 
         public string Unicode { get; set; }
 

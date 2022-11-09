@@ -3,7 +3,7 @@ using Application.Contacts;
 using Application.Core;
 using Application.DTO;
 using Infrastructure.Core;
-using Infrastructure.Services;
+using Infrastructure.Interface;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System;

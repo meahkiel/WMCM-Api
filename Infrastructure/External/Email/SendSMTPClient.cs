@@ -15,6 +15,15 @@ namespace Infrastructure.External.Email
 
     public interface ISendSMTPClient
     {
+        public string Email { get; set; }
+        public string Host { get; set; }
+        public int Port { get; set; }
+
+        public string UserName { get; set; }
+
+        public string Password { get; set; }
+
+
         Task SendEmailAsync(EmailParameter parameter);
     }
 
@@ -37,18 +46,21 @@ namespace Infrastructure.External.Email
             
             _mediator = mediator;
         }
-       
-        public async Task SendEmailAsync(EmailParameter parameter) {
 
-            try
-            {
+        public string Email { get; set; }
+        public string Host { get; set; }
+        public int Port { get; set; }
+
+        public string UserName { get; set; }
+
+        public string Password { get; set; }
+
+        public async Task SendEmailAsync(EmailParameter parameter) {
+            try {
 
                 var mimeMessage = new MimeMessage();
-                var result = await _mediator.Send(new GetByType.Query{ Type = "email" });
-                var channel = result.Value;
 
-
-                mimeMessage.From.Add(new MailboxAddress(channel.Email, channel.Email));
+                mimeMessage.From.Add(new MailboxAddress(Email, Email));
                 mimeMessage.To.Add(new MailboxAddress(parameter.To, parameter.To));
                 mimeMessage.Subject = parameter.Subject;
                 mimeMessage.Body = new TextPart("html")
@@ -56,14 +68,13 @@ namespace Infrastructure.External.Email
                     Text = parameter.Body
                 };
 
-                await SendProcess(mimeMessage,channel.Host,
-                    channel.Port,channel.UserName,channel.Password);
+                await SendProcess(mimeMessage,Host,
+                    Port,UserName,Password);
             }
             catch(Exception ex)
             {
                 throw new Exception(ex.Message);
             }
-
         }
 
         private async Task SendProcess(MimeMessage mimeMessage,string host,

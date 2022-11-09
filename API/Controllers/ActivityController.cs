@@ -40,5 +40,13 @@ namespace API.Controllers
             emailFormValue.Type = "email";
             return HandleResult(await _mediator.Send(new SendActivity.Command { Entry = emailFormValue }));
         }
+
+        [HttpPost("web")]
+        public async Task<IActionResult> SendWeb([FromForm]ActivityEntryDTO webForm)
+        {
+            webForm.Type = "web";
+            return HandleResult(await _mediator.Send(new HandleActivity.Command { Activity = webForm }));
+
+        }
     }
 }
