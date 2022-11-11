@@ -30,18 +30,18 @@ namespace Application.MarketingTasks
             _context = context;
             _userAccessorService = userAccessorService;
         }
+
         public async Task Handle(NotifyTaskEvent notification, CancellationToken cancellationToken)
         {
-            var user = await _context.GetContext().Users.FirstOrDefaultAsync(u => u.UserName == 
+            var user = await _context.GetContext().Users.FirstOrDefaultAsync(u => u.UserName ==
                         notification.AssignedTo);
 
 
-            _context.Notifications.Add(new Notification
-            {
-                Description = notification.Description,
-                Module = notification.Module,
-                UserId = user.Id.ToString(),
-            });
+            _context.Notifications.Add(Notification.Create(
+                description: notification.Description,
+                module: notification.Module,
+                userId: user.Id.ToString()
+            ));
 
             await _context.SaveChangesAsync();
         }

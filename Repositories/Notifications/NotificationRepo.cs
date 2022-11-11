@@ -12,7 +12,7 @@ namespace Repositories.Notifications
 {
     public interface INotificationRepo : IRepositoryBase<Notification>
     {
-        Task<IEnumerable<Notification>> GetAll(string module);
+        Task<IEnumerable<Notification>> GetAllUnread(string userId);
 
     }
     public class NotificationRepo : INotificationRepo
@@ -28,10 +28,10 @@ namespace Repositories.Notifications
             _context.Notifications.Add(entity);
         }
 
-        public async Task<IEnumerable<Notification>> GetAll(string module)
+        public async Task<IEnumerable<Notification>> GetAllUnread(string userId)
         {
             return await _context.Notifications
-                    .Where(n => n.Module == module)
+                    .Where(n => n.UserId == userId && n.HasRead == false)
                     .ToListAsync();
         }
 

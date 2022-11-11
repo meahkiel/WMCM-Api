@@ -1,5 +1,7 @@
 ﻿using API.DTOs;
 using API.Services;
+using Core.Enum;
+using Core.Notifications;
 using Core.Users;
 using Dapper;
 using Microsoft.AspNetCore.Authorization;
@@ -8,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Persistence.Context;
+using Repositories.Unit;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,7 +20,7 @@ using System.Threading.Tasks;
 namespace API.Controllers
 {
 
-    [Authorize(Roles = "admin,manager")]
+    [Authorize(Roles = "admin,manager,staff")]
     [Route("api/[controller]")]
     [ApiController]
     public class AccountController : ControllerBase
@@ -26,12 +29,12 @@ namespace API.Controllers
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly SignInManager<AppUser> _signInManager;
         private readonly TokenService _tokenService;
-        private readonly DataContext _dataContext;
+        private readonly UnitWrapper _dataContext;
 
         public AccountController(UserManager<AppUser> userManager,
             RoleManager<IdentityRole> roleManager,
             SignInManager<AppUser> signInManager,
-            TokenService tokenService,DataContext context)
+            TokenService tokenService,UnitWrapper context)
         {
             _userManager = userManager;
             _roleManager = roleManager;
@@ -54,7 +57,8 @@ namespace API.Controllers
             if(result.Succeeded)
             {
                 var userRoles = await _userManager.GetRolesAsync(user);
-                return CreateUser(user,userRoles);
+                var userNotifications = await _dataContext.Notifications.GetAllUnread(user.Id);
+                return CreateUser(user,userRoles,userNotifications);
             }
 
             return Unauthorized("Incorrect Password");
@@ -138,33 +142,55 @@ namespace API.Controllers
             }
                 
         }
-        
+
+        [Authorize(Roles = "admin,manager,staff")]
         [HttpGet("user")]
         public async Task<ActionResult<UserDto>> GetCurrentUser()
         {
+            
             var user = await _userManager.FindByNameAsync(User.FindFirstValue(ClaimTypes.Name));
-
+            
+            var userNotifications = await _dataContext.Notifications.GetAllUnread(user.Id);
+            
             if (user == null) 
                 return BadRequest("Problem in getting user");
 
             var userRoles  = await _userManager.GetRolesAsync(user);
             
-            return CreateUser(user,userRoles);
+            return CreateUser(user,userRoles, userNotifications);
         } 
 
         [HttpGet]
         public async Task<ActionResult<List<UserDto>>> GetUsers()
         {
+            
             var users = await _userManager.Users.ToListAsync();
+            
             List<UserDto> userDto = new List<UserDto>();
-            foreach(var user in users)
-            {
+            
+            foreach(var user in users) {
                 userDto.Add(CreateUser(user,await _userManager.GetRolesAsync(user)));
             }
+            
             return  userDto;
         }
 
-        private UserDto CreateUser(AppUser user,IList<string> roles)
+        private UserDto CreateUser(AppUser user, IList<string> roles)
+        {
+            return new UserDto
+            {
+                Id = user.Id,
+                DisplayName = user.DisplayName,
+                JobTitle = user.JobTitle,
+                Email = user.Email,
+                Token = _tokenService.CreateToken(user, roles[0]),
+                Username = user.UserName,
+                Department = user.Department,
+                Roles = new List<string>(roles)
+            };
+        }
+
+        private UserDto CreateUser(AppUser user,IList<string> roles, IEnumerable<Notification> notifications)
         {
             return new UserDto
             {
@@ -175,7 +201,8 @@ namespace API.Controllers
                 Token = _tokenService.CreateToken(user,roles[0]),
                 Username = user.UserName,
                 Department = user.Department,
-                Roles = new List<string>(roles)
+                Roles = new List<string>(roles),
+                Notifications = notifications
             };
         }
 

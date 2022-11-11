@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Core.Notifications;
+using System;
 using System.Collections.Generic;
 
 namespace API.DTOs
@@ -18,6 +19,8 @@ namespace API.DTOs
         public string Image { get; set; }
 
         public List<string> Roles { get; set; }
-       
+
+        public IEnumerable<Notification> Notifications { get; set; }
+
     }
 }
