@@ -12,9 +12,6 @@ namespace Application.Configuration
         public MappingProfiles()
         {
 
-           
-
-
             CreateMap<Contact, ContactFormDTO>()
                 .ForMember(c => c.Id, o => o.MapFrom(c => c.Id))
                 .ForMember(c => c.Gender, o => o.MapFrom(c => c.ToGenderString()))
@@ -38,6 +35,7 @@ namespace Application.Configuration
             CreateMap<Campaign, CampaignDTO>()
                 .ForMember(c => c.Activities, o => o.MapFrom(o => o.Activities))
                 .ReverseMap();
+            
 
             CreateMap<SubTask, MarketingSubTaskDTO>().ReverseMap();
 

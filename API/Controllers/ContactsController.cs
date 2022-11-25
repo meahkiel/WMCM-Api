@@ -1,13 +1,10 @@
 ﻿
 using Application.Contacts;
-using Application.Core;
 using Application.DTO;
 using Infrastructure.Core;
 using Infrastructure.Interface;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.IO;
 using System.Threading.Tasks;
 
 namespace API.Controllers

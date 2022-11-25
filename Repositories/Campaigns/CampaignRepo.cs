@@ -1,12 +1,9 @@
 ﻿using Core.Campaigns;
-using Dapper;
 using Microsoft.EntityFrameworkCore;
 using Persistence.Context;
-using Repositories.DTO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 
@@ -27,12 +24,33 @@ namespace Repositories.Campaigns
             _context.Campaigns.Add(entity);
         }
 
+        public void AddActivity(Activity activity)
+        {
+            _context.Activities.Add(activity);
+        }
+
+       
+
+        public void DeleteActivity(Activity activity)
+        {
+            _context.Activities.Remove(activity);
+        }
+
         public async Task<IEnumerable<Campaign>> GetActiveCampaigns()
         {
             return await _context.Campaigns
                 .Include(c => c.Activities)
                 //.Where(c => c.DateFrom <= DateTime.Now && c.DateTo >= DateTime.Now)
                 .ToListAsync();
+        }
+
+        public async Task<Campaign> GetByActivity(string activityId)
+        {
+
+            return await _context.Campaigns
+              .Include(c => c.Activities)
+              .Where(c => c.Activities.Any(a => a.Id == Guid.Parse(activityId)))
+              .FirstOrDefaultAsync();
         }
 
         public async Task<Campaign> GetSingleCampaign(Guid id)
@@ -52,6 +70,9 @@ namespace Repositories.Campaigns
             _context.Update(entity);
         }
 
-        
+        void ICampaignRepo.AddActivity(Activity activity)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

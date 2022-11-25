@@ -20,7 +20,7 @@ namespace API.DTOs
 
         public List<string> Roles { get; set; }
 
-        public IEnumerable<Notification> Notifications { get; set; }
+        public IEnumerable<NotificationDTO> Notifications { get; set; }
 
     }
 }

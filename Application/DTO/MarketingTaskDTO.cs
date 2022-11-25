@@ -1,5 +1,6 @@
 ﻿
 
+using Core.Enum;
 using Core.Tasks;
 using System;
 using System.Collections.Generic;
@@ -17,7 +18,7 @@ namespace Application.DTOs
         public bool Close { get; set; } = false;
 
         
-        public int TotalSubTaskCount => SubTasks.Where(s => s.Status != StatusEnum.Done.ToString()).Count();
+        public int TotalSubTaskCount => SubTasks.Where(s => s.Status != TaskStatusEnum.Done.ToString()).Count();
         public List<MarketingSubTaskDTO> SubTasks { get; set; }
         public List<string> Users => SubTasks.Select(s => s.AssignedTo).Distinct().ToList();
     }

@@ -1,16 +1,12 @@
 ﻿using Application.DTO;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Core.Campaigns;
 
 namespace Application.Interface
 {
     public interface IServiceFactory
     {
-        IActivityServiceAccessor GetWebPost();
-       
+        IActivityServiceAccessor<ActivityEntryDTO,Activity> GetWebPost();
+        IActivityServiceAccessor<ActivityEntryDTO, Activity> GetSMS();
 
     }
 }

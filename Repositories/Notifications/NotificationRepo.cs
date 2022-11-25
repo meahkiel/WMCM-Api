@@ -5,7 +5,6 @@ using Repositories.Base;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Repositories.Notifications
@@ -14,7 +13,12 @@ namespace Repositories.Notifications
     {
         Task<IEnumerable<Notification>> GetAllUnread(string userId);
 
+        Task<IEnumerable<Notification>> GetUserNotifications(string userId);
+
+        Task<Notification> GetUnread(string notificaitonId);
+        
     }
+    
     public class NotificationRepo : INotificationRepo
     {
         private readonly DataContext _context;
@@ -28,11 +32,26 @@ namespace Repositories.Notifications
             _context.Notifications.Add(entity);
         }
 
+        public async Task<IEnumerable<Notification>> GetUserNotifications(string userId)
+        {
+            return await _context.Notifications
+                            .Where(x => x.UserId == userId)
+                            .ToListAsync();
+
+        }
+
         public async Task<IEnumerable<Notification>> GetAllUnread(string userId)
         {
             return await _context.Notifications
                     .Where(n => n.UserId == userId && n.HasRead == false)
                     .ToListAsync();
+        }
+
+        public async Task<Notification> GetUnread(string notificaitonId)
+        {
+            return await _context
+                            .Notifications
+                            .FirstOrDefaultAsync(n => n.Id.ToString() == notificaitonId);
         }
 
         public void Remove(Notification entity)
@@ -42,7 +61,7 @@ namespace Repositories.Notifications
 
         public void Update(Notification entity)
         {
-            throw new NotImplementedException();
+            _context.Notifications.Update(entity);
         }
     }
 }

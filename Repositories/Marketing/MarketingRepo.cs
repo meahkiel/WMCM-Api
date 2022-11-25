@@ -1,10 +1,10 @@
-﻿using Core.Tasks;
+﻿using Core.Enum;
+using Core.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Persistence.Context;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Repositories.Marketing
@@ -132,7 +132,7 @@ namespace Repositories.Marketing
                     {
                         subTask.Id = Guid.NewGuid();
                         subTask.MarketingTask = marketing;
-                        subTask.UpdateStatus(StatusEnum.Todo);
+                        subTask.UpdateStatus(TaskStatusEnum.Todo);
                         
                         _context.Add(subTask).State = EntityState.Added;
                     }
@@ -145,7 +145,7 @@ namespace Repositories.Marketing
                             }
                         }
 
-                        StatusEnum status = (StatusEnum)Enum.Parse(typeof(StatusEnum), subTask.Status);
+                        TaskStatusEnum status = (TaskStatusEnum)Enum.Parse(typeof(TaskStatusEnum), subTask.Status);
                         existingSubTask.UpdateStatus(status);
                         
                         _context.Update(marketing);

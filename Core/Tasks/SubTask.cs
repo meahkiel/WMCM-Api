@@ -1,20 +1,12 @@
 ﻿using Core.Base;
+using Core.Enum;
 using Core.Extensions;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Core.Tasks
 {
 
-    public enum StatusEnum
-    {
-        Todo,
-        Doing,
-        Done
-    }
+
 
     [Auditable]
     public class SubTask : BaseEntity
@@ -27,7 +19,7 @@ namespace Core.Tasks
 
         public string Status { get; set; } = "";
 
-        public void UpdateStatus(StatusEnum value)
+        public void UpdateStatus(TaskStatusEnum value)
         {
             Status = value.ToString();
         }

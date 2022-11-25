@@ -1,4 +1,5 @@
-﻿using Application.Campaigns;
+﻿using Application.Campaigns.Commands;
+using Application.Campaigns.Queries;
 using Application.DTO;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -32,9 +33,9 @@ namespace API.Controllers
 
         
         [HttpPost("create")]
-        public async Task<IActionResult> Create([FromBody]CampaignDTO campaign)
+        public async Task<IActionResult> Create([FromBody]Create.Command campaign)
         {
-            var unit = await _mediator.Send(new Create.Command { Campaign = campaign });
+            var unit = await _mediator.Send(campaign);
             return HandleResult(unit);
         }
 

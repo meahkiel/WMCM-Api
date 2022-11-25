@@ -1,16 +1,13 @@
 ﻿using Core.Base;
+using Core.Enum;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Core.Campaigns
 {
 
-   
 
-    
+
+
 
     public class Activity : BaseEntity
     {
@@ -20,7 +17,8 @@ namespace Core.Campaigns
             string to, 
             string body,
             DateTime dispatchDate,
-            DateTime? sendDate = null)
+            DateTime? sendDate = null,
+            ActivityStatusEnum status = ActivityStatusEnum.Pending)
         {
             
             var activity = new Activity();
@@ -32,6 +30,7 @@ namespace Core.Campaigns
             activity.Type = "sms";
             activity.To = to;
             activity.Body = body;
+            activity.Status = status.ToString();
 
             return activity; 
         }
@@ -42,7 +41,7 @@ namespace Core.Campaigns
             string subject, 
             string body, 
             DateTime dispatchDate,string to, 
-            DateTime? sendDate = null)
+            DateTime? sendDate,ActivityStatusEnum status)
         {
 
             var activity = new Activity();
@@ -52,7 +51,7 @@ namespace Core.Campaigns
             activity.Title = $"{title}";
             activity.Description = $"{description}";
             activity.Type = "email";
-            activity.Status = "Completed";
+            activity.Status = status.ToString();
             activity.Subject = subject;
             activity.Body = body;
             activity.To = to;

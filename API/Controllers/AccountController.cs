@@ -123,6 +123,27 @@ namespace API.Controllers
             return BadRequest("Problem in registering user");
         }
 
+
+        [HttpPut("notification")]
+        public async Task<IActionResult> UpdateNotification([FromBody]NotificationDTO notification)
+        {
+            try
+            {
+                var userNotification = await _dataContext.Notifications.GetUnread(notification.Id);
+            
+                userNotification.HasRead = true;
+                _dataContext.Notifications.Update(userNotification);
+                await _dataContext.SaveChangesAsync();
+
+                return Ok();
+
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
         [HttpPut("update")]
         public async Task<IActionResult> Update(RegisterDto register)
         {
@@ -158,7 +179,21 @@ namespace API.Controllers
             var userRoles  = await _userManager.GetRolesAsync(user);
             
             return CreateUser(user,userRoles, userNotifications);
-        } 
+        }
+
+        [HttpGet("profile")]
+        public async Task<ActionResult<UserDto>> GetCurrentUserProfile()
+        {
+            var user = await _userManager.FindByNameAsync(User.FindFirstValue(ClaimTypes.Name));
+
+            var userNotifications = await _dataContext.Notifications.GetUserNotifications(user.Id);
+
+            if (user == null)
+                return BadRequest("Problem in getting user");
+            var usersRoles = await _userManager.GetRolesAsync(user);
+
+            return CreateUser(user, usersRoles, userNotifications);
+        }
 
         [HttpGet]
         public async Task<ActionResult<List<UserDto>>> GetUsers()
@@ -192,6 +227,18 @@ namespace API.Controllers
 
         private UserDto CreateUser(AppUser user,IList<string> roles, IEnumerable<Notification> notifications)
         {
+            var dtoNotifications = new List<NotificationDTO>();
+            foreach (var notif in notifications)
+            {
+                dtoNotifications.Add(new NotificationDTO
+                {
+                    Id = notif.Id.ToString(),
+                    Description = notif.Description,
+                    HasRead = notif.HasRead,
+                    CreatedAt = DateTime.Now,
+                    Module = notif.Module,
+                });
+            }
             return new UserDto
             {
                 Id = user.Id,
@@ -202,7 +249,7 @@ namespace API.Controllers
                 Username = user.UserName,
                 Department = user.Department,
                 Roles = new List<string>(roles),
-                Notifications = notifications
+                Notifications = dtoNotifications
             };
         }
 

@@ -2,8 +2,8 @@
 using Application.DTO;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Application.Core;
 using MediatR;
+using Application.SeedWorks;
 
 namespace Infrastructure.Interface
 {

@@ -6,8 +6,8 @@ using System.IO;
 using System.Threading.Tasks;
 using Application.Contacts;
 using MediatR;
-using Application.Core;
 using Infrastructure.Interface;
+using Application.SeedWorks;
 
 namespace Infrastructure.Services
 {

@@ -1,5 +1,5 @@
-﻿using Application.Core;
-using Application.Interface;
+﻿using Application.Interface;
+using Application.SeedWorks;
 using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
 using Infrastructure.External.Credential;

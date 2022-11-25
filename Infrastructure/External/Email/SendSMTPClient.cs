@@ -1,13 +1,7 @@
-﻿using Application.Channels;
-using Application.Core;
-using MailKit.Net.Smtp;
+﻿using MailKit.Net.Smtp;
 using MediatR;
-using Microsoft.Extensions.Options;
 using MimeKit;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Infrastructure.External.Email

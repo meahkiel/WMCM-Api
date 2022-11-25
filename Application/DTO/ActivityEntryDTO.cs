@@ -12,6 +12,8 @@ namespace Application.DTO
     public record ActivityInitial (string[] Groups,List<Template> Templates);
     public class ActivityEntryDTO
     {
+
+        public string Id { get; set; }
         public Guid CampaignId { get; set; }
 
         public string Title { get; set; }

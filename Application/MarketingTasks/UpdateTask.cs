@@ -1,6 +1,6 @@
-﻿using Application.Core;
-using Application.DTOs;
+﻿using Application.DTOs;
 using Application.Interface;
+using Application.SeedWorks;
 using AutoMapper;
 using Core.Enum;
 using Core.Tasks;
@@ -70,7 +70,7 @@ namespace Application.MarketingTasks
                                 AssignedTo = (roles.FirstOrDefault() == RoleEnum.Manager.ToString().ToLower()) ? task.AssignedTo : currentUser,
                                 AssignedBy = currentUser,
                                 Task = task.Task,
-                                Status = StatusEnum.Todo.ToString(),
+                                Status = TaskStatusEnum.Todo.ToString(),
                                 MarketingTask = marketingTask
                             };
                             _context.Marketings.AddSubTask(subTask);

@@ -1,4 +1,5 @@
-﻿using Application.Activities;
+﻿using Application.Activities.Commands;
+using Application.Activities.Queries;
 using Application.DTO;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace API.Controllers
 {
-    
+
     [Route("api/[controller]")]
     [ApiController]
     public class ActivityController : BaseApiController
@@ -31,14 +32,14 @@ namespace API.Controllers
         public async Task<IActionResult> SendSMS([FromBody]ActivityEntryDTO smsFormValue)
         {
             smsFormValue.Type = "sms";
-            return HandleResult(await _mediator.Send(new SendActivity.Command { Entry = smsFormValue }));
+            return HandleResult(await _mediator.Send(new HandleActivity.Command { Activity = smsFormValue }));
         }
 
         [HttpPost("email")]
         public async Task<IActionResult> SendEmail([FromBody]ActivityEntryDTO emailFormValue)
         {
             emailFormValue.Type = "email";
-            return HandleResult(await _mediator.Send(new SendActivity.Command { Entry = emailFormValue }));
+            return HandleResult(await _mediator.Send(new HandleActivity.Command { Activity = emailFormValue }));
         }
 
         [HttpPost("web")]

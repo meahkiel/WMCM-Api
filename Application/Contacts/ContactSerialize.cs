@@ -1,6 +1,7 @@
 ﻿using Core.Contacts;
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 
 namespace Application.Contacts
 {
@@ -13,6 +14,28 @@ namespace Application.Contacts
         {
             _contacts = contacts;
             _additional = additional;
+        }
+
+        public string Serialize(string type)
+        {
+            List<string> list = new List<string>();
+            foreach (Contact contact in _contacts)
+            {
+                if (type == "mobile")
+                    list.Add(contact.MobileNo);
+                else if (type == "email")
+                    list.Add(contact.EmailAddress);
+                else
+                    continue;
+            }
+
+            if (!String.IsNullOrEmpty(_additional))
+            {
+                var strAdditional = _additional.Split(',');
+                list.AddRange(strAdditional);
+            }
+
+            return string.Join(",", list.ToArray());
         }
 
         public List<string> ExtractSMS()

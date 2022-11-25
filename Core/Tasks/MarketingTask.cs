@@ -1,10 +1,8 @@
 ﻿using Core.Base;
+using Core.Enum;
 using Core.Extensions;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Core.Tasks
 {
@@ -23,7 +21,7 @@ namespace Core.Tasks
 
         public void AddSubTask(string task,string assignedTo,string assignedBy)
         {       
-            SubTasks.Add(new SubTask {Id = Guid.NewGuid(), Task = task, AssignedTo = assignedTo,AssignedBy = assignedBy, Status = StatusEnum.Todo.ToString() });
+            SubTasks.Add(new SubTask {Id = Guid.NewGuid(), Task = task, AssignedTo = assignedTo,AssignedBy = assignedBy, Status = TaskStatusEnum.Todo.ToString() });
         }
 
         

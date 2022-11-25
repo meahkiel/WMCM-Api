@@ -15,7 +15,7 @@ namespace Infrastructure.External.SMS
     public class TwilioSMS : ISMSService
     {
         
-        private readonly IMediator _mediator;
+        
         public string ApiKey { get; set; }
         public string ApiSecret { get; set; }
        

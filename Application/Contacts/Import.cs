@@ -1,5 +1,5 @@
-﻿using Application.Core;
-using Application.DTO;
+﻿using Application.DTO;
+using Application.SeedWorks;
 using AutoMapper;
 using Core.Contacts;
 using MediatR;
