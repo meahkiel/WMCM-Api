@@ -7,6 +7,9 @@ namespace Application.Interface
     {
         IActivityServiceAccessor<ActivityEntryDTO,Activity> GetWebPost();
         IActivityServiceAccessor<ActivityEntryDTO, Activity> GetSMS();
+        IActivityServiceAccessor<ActivityEntryDTO, Activity> GetSMTP();
+
+
 
     }
 }

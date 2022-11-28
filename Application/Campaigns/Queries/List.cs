@@ -58,7 +58,7 @@ namespace Application.Campaigns.Queries
                                                             .Count();
 
                             list.TotalEcommerce = item.Activities
-                                                        .Where(a => a.Type == "webmail")
+                                                        .Where(a => a.Type == "web")
                                                         .Count();
 
                             list.TotalSocialPost = item.Activities

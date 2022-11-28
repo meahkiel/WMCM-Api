@@ -35,8 +35,9 @@ namespace Application.Activities.Commands
             private IActivityServiceAccessor<ActivityEntryDTO,Activity> GetService(string serviceType) => serviceType switch
             {
 
-                "web" => _serviceFactory.GetWebPost(),
-                "sms" => _serviceFactory.GetSMS(),
+                "web"   => _serviceFactory.GetWebPost(),
+                "sms"   => _serviceFactory.GetSMS(),
+                "email" => _serviceFactory.GetSMTP(),
                 _ => throw new Exception("Cannot Service Type")
             };
 

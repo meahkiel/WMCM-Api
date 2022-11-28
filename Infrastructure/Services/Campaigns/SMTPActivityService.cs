@@ -104,7 +104,7 @@ namespace Infrastructure.Services.Campaigns
         {
 
             var contacts = await _context.Customers.GetContactByGroup(dto.ToGroup);
-            ContactSerialize serialize = new ContactSerialize(contacts.ToList(), dto.ToGroup);
+            ContactSerialize serialize = new ContactSerialize(contacts.ToList(), dto.To);
             string strEmail = serialize.Serialize("email");
             string description = dto.ToGroup +
                             (!string.IsNullOrEmpty(dto.ToGroup) ? dto.ToGroup : "");

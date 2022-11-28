@@ -35,7 +35,7 @@ namespace Infrastructure.Services.Campaigns
         {
 
             var activity = await CreateSMSActivity(dto);
-            var smsActivity = await _context.Channels.FindByTypeAsync("sms");
+            var smsActivity = await _context.Channels.FindByTypeAsync("twilio");
 
             activity.Status = ActivityStatusEnum.Pending.ToString();
             activity.DispatchDate = dto.DateToSend ?? DateTime.Now;
@@ -94,7 +94,7 @@ namespace Infrastructure.Services.Campaigns
         {
 
             var contacts = await _context.Customers.GetContactByGroup(dto.ToGroup);
-            ContactSerialize serialize = new ContactSerialize(contacts.ToList(), dto.ToGroup);
+            ContactSerialize serialize = new ContactSerialize(contacts.ToList(),dto.To);
             string strmobileNos = serialize.Serialize("mobile");
 
             return Activity.CreateSMSActivity(
