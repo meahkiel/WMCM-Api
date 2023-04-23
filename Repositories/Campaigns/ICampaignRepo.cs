@@ -9,9 +9,13 @@ namespace Repositories.Campaigns
     public interface ICampaignRepo : IRepositoryBase<Campaign>
     {
         Task<IEnumerable<Campaign>> GetActiveCampaigns();
+        
         Task<Campaign> GetSingleCampaign(Guid id);
 
-        Task<Campaign> GetByActivity(string activityId);
+        Task<Activity> GetByActivity(string activityId);
+
+        void UpdateActivity(Activity activity);
+
         void DeleteActivity(Activity activity);
 
         void AddActivity(Activity activity);

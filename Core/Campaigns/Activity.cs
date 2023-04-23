@@ -4,11 +4,6 @@ using System;
 
 namespace Core.Campaigns
 {
-
-
-
-
-
     public class Activity : BaseEntity
     {
 

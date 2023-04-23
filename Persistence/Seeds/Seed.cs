@@ -19,12 +19,14 @@ namespace Persistence.Seeds
 
         public static async Task DataSeedTemplate(DataContext context)
         {
-            if(!context.Templates.Any())
+            if (!context.Templates.Any())
             {
                 var templates = new List<Template>
                 {
-                    new Template { Id = Guid.NewGuid(), Title = "Customer Greeting", Description = "New Customer Template ", TemplateHtml = "Greetings Customer"},
-                    new Template { Id = Guid.NewGuid(),Title = "Al Sharq", Description = "Al Sharq Big Sales and Raffle", TemplateHtml = "Big Sales and Raffle awaits you"}
+                    new Template { Id = Guid.NewGuid(), Title = "Customer Greeting", Description = "New Customer Template ", TemplateHtml = "Greetings Customer", Type="sms"},
+                    new Template { Id = Guid.NewGuid(),Title = "Al Sharq", Description = "Al Sharq Big Sales and Raffle", TemplateHtml = "Big Sales and Raffle awaits you",Type="sms"},
+                     new Template { Id = Guid.NewGuid(), Title = "Customer Greeting", Description = "New Customer Template ", TemplateHtml = "<h1>Greetings Customer</h1>", Type="email"},
+                    new Template { Id = Guid.NewGuid(),Title = "Al Sharq", Description = "Al Sharq Big Sales and Raffle", TemplateHtml = "<h1>Big Sales and Raffle awaits you</h1>",Type="email"}
                 };
                 context.Templates.AddRange(templates);
             }
@@ -74,7 +76,7 @@ namespace Persistence.Seeds
 
         public static async Task DataSeedChannel(DataContext context)
         {
-            if(!context.ChannelSettings.Any())
+            if (!context.ChannelSettings.Any())
             {
                 context.ChannelSettings.Add(new ChannelSetting
                 {
@@ -116,7 +118,7 @@ namespace Persistence.Seeds
 
         public static async Task DataSeedTask(DataContext context)
         {
-            if(!context.MarketingTasks.Any())
+            if (!context.MarketingTasks.Any())
             {
 
                 var task = new MarketingTask
@@ -127,18 +129,18 @@ namespace Persistence.Seeds
                 };
 
                 task.AddSubTask("Make a concept for graphics", "des", "bob");
-                task.AddSubTask("Contact the IT for the preparation of contact list", "staff","bob");
-                
+                task.AddSubTask("Contact the IT for the preparation of contact list", "staff", "bob");
+
                 context.MarketingTasks.Add(task);
-                
+
                 await context.SaveChangesAsync();
-               
+
             }
         }
 
         public static async Task DataSeedCampaign(DataContext context)
         {
-           
+
             if (!context.Campaigns.Any())
             {
 
@@ -165,23 +167,31 @@ namespace Persistence.Seeds
             await context.SaveChangesAsync();
 
         }
-        public static async Task SeedRoleData(DataContext context,UserManager<AppUser> userManager,RoleManager<IdentityRole> roleManager)
+        public static async Task SeedRoleData(DataContext context, UserManager<AppUser> userManager, RoleManager<IdentityRole> roleManager)
         {
-           
 
-            if(!roleManager.Roles.Any())
+
+            if (!roleManager.Roles.Any())
             {
                 await roleManager.CreateAsync(new IdentityRole(RoleEnum.Manager.ToString().ToLower()));
                 await roleManager.CreateAsync(new IdentityRole(RoleEnum.Admin.ToString().ToLower()));
                 await roleManager.CreateAsync(new IdentityRole(RoleEnum.Staff.ToString().ToLower()));
+                await roleManager.CreateAsync(new IdentityRole(RoleEnum.Sales.ToString().ToLower()));
+            }
+            else
+            {
+                await roleManager.CreateAsync(new IdentityRole(RoleEnum.Sales.ToString().ToLower()));
             }
 
-            if(!userManager.Users.Any())
+            if (!userManager.Users.Any())
             {
                 var users = new List<AppUser>()
                 {
                     new AppUser() { DisplayName = "Bob", JobTitle = "Manager",
                         UserName = "bob", Department="Marketing", Email="bob@testing.com"},
+                    new AppUser() { DisplayName = "Admin", JobTitle = "Admin",UserName="admin", Email = "admin@testing.com"},
+                    new AppUser() { DisplayName="Sales", JobTitle="Sales", Email="sales@testing.com", UserName = "sales"},
+
                     new AppUser() { DisplayName = "Designer1", JobTitle = "Graphic Designer",
                         UserName = "des", Department="Marketing", Email="des@testing.com"},
                     new AppUser() { DisplayName = "Staff1", JobTitle="Staff", UserName = "staff", Email="staff@testing.com"},
@@ -195,30 +205,33 @@ namespace Persistence.Seeds
                     }
 
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
 
                 }
             }
             else
             {
-               
+
                 var users = await userManager.Users.ToListAsync();
-                foreach(var user in users)
+                foreach (var user in users)
                 {
-                    if(user.UserName == "bob")
+                    if (user.UserName == "bob")
                     {
                         await userManager.AddToRoleAsync(user, RoleEnum.Manager.ToString().ToLower());
 
-
                     }
-                    else if(user.UserName == "admin")
+                    else if (user.UserName == "admin")
                     {
                         await userManager.AddToRoleAsync(user, RoleEnum.Admin.ToString().ToLower());
                     }
+                    else if(user.UserName == "sales")
+                    {
+                        await userManager.AddToRoleAsync(user,RoleEnum.Sales.ToString().ToLower());
+                    }
                     else
                     {
-                        await userManager.AddToRoleAsync(user,RoleEnum.Staff.ToString().ToLower());
+                        await userManager.AddToRoleAsync(user, RoleEnum.Staff.ToString().ToLower());
                     }
                 }
             }

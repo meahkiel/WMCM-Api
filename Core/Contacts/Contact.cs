@@ -71,7 +71,8 @@ namespace Core.Contacts
 
         public string ToFullName()
         {
-            return $"{FirstName} {MiddleName.Substring(0, 1).ToUpper()} {LastName}";
+            var middleName = string.IsNullOrEmpty(MiddleName) ? string.Empty :MiddleName.Substring(0, 1);
+            return $"{FirstName} {middleName} {LastName}";
         }
 
         public Salutation Title { get; set; }

@@ -22,6 +22,7 @@
 
   <ItemGroup>
     <Folder Include="Activities\Services\" />
+    <Folder Include="Campaigns\Validators\" />
   </ItemGroup>
 
 </Project>

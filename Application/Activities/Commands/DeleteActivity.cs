@@ -3,7 +3,6 @@ using Core.Enum;
 using MediatR;
 using Repositories.Unit;
 using System;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -29,19 +28,18 @@ namespace Application.Activities.Commands
             {
                 try
                 {
-                    var campaign = await _context.CampaignRepo.GetByActivity(request.ActivityId);
-                    if (campaign == null)
+                    var activity = await _context.CampaignRepo.GetByActivity(request.ActivityId);
+                    if (activity == null)
                         throw new Exception("Activity not found");
 
 
                     //check if the activity is pending
-                    var activity = campaign.Activities.SingleOrDefault();
                     if(activity.Status != ActivityStatusEnum.Pending.ToString())
                     {
                         throw new Exception("Activity is no longer pending and cannot be deleted");
                     }
 
-                    _context.CampaignRepo.DeleteActivity(campaign.Activities.SingleOrDefault());
+                    _context.CampaignRepo.DeleteActivity(activity);
                     
                     await _context.SaveChangesAsync();
 

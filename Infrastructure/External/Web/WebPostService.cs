@@ -23,12 +23,9 @@ namespace Infrastructure.External.Web
         public string BaseUrl { get; set; }
 
 
-        public async Task<bool> Post(PostParameter postParameter)
-        {
+        public async Task<bool> Post(PostParameter postParameter) {
             try
             {
-                
-
                 var url = BaseUrl;
                 var client = new RestClient(url);
                 var request = new RestRequest("campaign", Method.Post);
@@ -38,10 +35,8 @@ namespace Infrastructure.External.Web
                 var response = await client.PostAsync(request);
 
                 return true;
-
             }
-            catch(Exception ex)
-            {
+            catch(Exception ex) {
                 throw new Exception(ex.Message);
             }
         }

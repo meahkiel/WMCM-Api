@@ -1,6 +1,5 @@
 ﻿using Application.Campaigns.Queries;
 using Application.Configuration;
-using Application.SeedWorks.PipelineBehaviours;
 using FluentValidation;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -19,7 +18,7 @@ namespace Application.Extensions
         {
 
             services.AddMediatR(typeof(List.QueryHandler));
-            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
+            
             services.AddDbContext<DataContext>(opt =>
             {
                 //opt.UseSqlite(configuration.GetConnectionString("SqliteConnection"));

@@ -44,13 +44,12 @@ namespace Repositories.Campaigns
                 .ToListAsync();
         }
 
-        public async Task<Campaign> GetByActivity(string activityId)
+        public async Task<Activity> GetByActivity(string activityId)
         {
 
-            return await _context.Campaigns
-              .Include(c => c.Activities)
-              .Where(c => c.Activities.Any(a => a.Id == Guid.Parse(activityId)))
-              .FirstOrDefaultAsync();
+            return await _context.Activities
+                            .Where(a => a.Id == Guid.Parse(activityId))
+                            .FirstOrDefaultAsync();
         }
 
         public async Task<Campaign> GetSingleCampaign(Guid id)
@@ -70,9 +69,11 @@ namespace Repositories.Campaigns
             _context.Update(entity);
         }
 
-        void ICampaignRepo.AddActivity(Activity activity)
+        public void UpdateActivity(Activity activity)
         {
-            throw new NotImplementedException();
+            _context.Activities.Update(activity);
         }
+
+       
     }
 }

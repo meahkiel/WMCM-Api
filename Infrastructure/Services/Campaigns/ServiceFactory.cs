@@ -1,6 +1,7 @@
 ﻿using Application.DTO;
 using Application.Interface;
 using Core.Campaigns;
+using Core.Channels;
 using Infrastructure.External.Email;
 using Infrastructure.External.SMS;
 using Infrastructure.External.Web;
@@ -10,38 +11,41 @@ namespace Infrastructure.Services.Campaigns
 {
     public class ServiceFactory : IServiceFactory
     {
-        private readonly UnitWrapper context;
+        
         private readonly IPhotoAccessor photoAccessor;
         private readonly IWebPostService webPostService;
         private readonly ISMSService smsService;
         private readonly ISendSMTPClient sendSMTPClient;
 
-        public ServiceFactory(UnitWrapper context,
-            IPhotoAccessor photoAccessor,
+        public ServiceFactory(
             IWebPostService webPostService,
             ISMSService smsService,
             ISendSMTPClient sendSMTPClient)
         {
-            this.context = context;
-            this.photoAccessor = photoAccessor;
+            
+           
             this.webPostService = webPostService;
             this.smsService = smsService;
             this.sendSMTPClient = sendSMTPClient;
         }
 
-        public IActivityServiceAccessor<ActivityEntryDTO,Activity> GetSMS()
-        {
-            return new SMSActivityService(smsService, context);
+        public IActivityServiceAccessor GetSMS(ChannelSetting setting) {
+            return new SMSActivityService(smsService, setting);
         }
 
-        public IActivityServiceAccessor<ActivityEntryDTO, Activity> GetWebPost()
+        public IActivityServiceAccessor GetWebPost(ChannelSetting setting)
         {
-            return new WebPostActivityService(context, webPostService, photoAccessor);
+            return new WebPostActivityService(webPostService,setting);
         }
 
-        public IActivityServiceAccessor<ActivityEntryDTO,Activity> GetSMTP()
+        public IActivityServiceAccessor GetSMTP(ChannelSetting setting)
         {
-            return new SMTPActivityService(sendSMTPClient, context);
+            return new SMTPActivityService(sendSMTPClient, setting);
+        }
+
+        public IActivityServiceAccessor GetSocial(ChannelSetting setting)
+        {
+            return new FacebookService(setting);
         }
     }
 }

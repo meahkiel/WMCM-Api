@@ -1,15 +1,12 @@
 ﻿using API.DTOs;
 using API.Services;
-using Core.Enum;
+using Application.SeedWorks;
 using Core.Notifications;
 using Core.Users;
-using Dapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
-using Persistence.Context;
 using Repositories.Unit;
 using System;
 using System.Collections.Generic;
@@ -20,7 +17,7 @@ using System.Threading.Tasks;
 namespace API.Controllers
 {
 
-    [Authorize(Roles = "admin,manager,staff")]
+    [Authorize(Roles = "admin,manager,staff,sales")]
     [Route("api/[controller]")]
     [ApiController]
     public class AccountController : ControllerBase
@@ -46,22 +43,37 @@ namespace API.Controllers
         [AllowAnonymous]
         [HttpPost("login")]
         public async Task<ActionResult<UserDto>> Login([FromBody]LoginDto loginDto) {
-            var user = await _userManager.FindByNameAsync(loginDto.Username);
-
-            if(user == null) {
-                return Unauthorized("Username is not recognized"); 
-            }
-
-            var result = await _signInManager.CheckPasswordSignInAsync(user, loginDto.Password, false);
             
-            if(result.Succeeded)
+            try
             {
+                var user = await _userManager.FindByNameAsync(loginDto.Username);
+
+                if (user == null)
+                {
+                    throw new UnauthorizedAccessException("Username is not recognized");
+                }
+
+                var result = await _signInManager.CheckPasswordSignInAsync(user, loginDto.Password, false);
+
+                if (!result.Succeeded)
+                {
+                    return Unauthorized("Incorrect Password");
+                }
                 var userRoles = await _userManager.GetRolesAsync(user);
                 var userNotifications = await _dataContext.Notifications.GetAllUnread(user.Id);
-                return CreateUser(user,userRoles,userNotifications);
+                return CreateUser(user, userRoles, userNotifications);
             }
+            catch(UnauthorizedAccessException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+          
 
-            return Unauthorized("Incorrect Password");
+            
         }
 
 
@@ -164,10 +176,9 @@ namespace API.Controllers
                 
         }
 
-        [Authorize(Roles = "admin,manager,staff")]
+        [Authorize(Roles = "admin,manager,staff,sales")]
         [HttpGet("user")]
-        public async Task<ActionResult<UserDto>> GetCurrentUser()
-        {
+        public async Task<ActionResult<UserDto>> GetCurrentUser() {
             
             var user = await _userManager.FindByNameAsync(User.FindFirstValue(ClaimTypes.Name));
             
@@ -227,6 +238,9 @@ namespace API.Controllers
 
         private UserDto CreateUser(AppUser user,IList<string> roles, IEnumerable<Notification> notifications)
         {
+
+            var userDTO = CreateUser(user,roles);
+
             var dtoNotifications = new List<NotificationDTO>();
             foreach (var notif in notifications)
             {
@@ -239,18 +253,9 @@ namespace API.Controllers
                     Module = notif.Module,
                 });
             }
-            return new UserDto
-            {
-                Id = user.Id,
-                DisplayName = user.DisplayName,
-                JobTitle = user.JobTitle,
-                Email = user.Email, 
-                Token = _tokenService.CreateToken(user,roles[0]),
-                Username = user.UserName,
-                Department = user.Department,
-                Roles = new List<string>(roles),
-                Notifications = dtoNotifications
-            };
+            userDTO.Notifications = dtoNotifications;
+
+            return userDTO;
         }
 
     }

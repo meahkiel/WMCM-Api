@@ -4,9 +4,8 @@ using System.Threading.Tasks;
 
 namespace Application.Interface
 {
-    public interface IActivityServiceAccessor
+    public interface IExternalService
     {
         Task<ServiceMessageBroker> Execute(Activity activity);
-        
     }
 }

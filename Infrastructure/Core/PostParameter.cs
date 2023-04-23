@@ -15,5 +15,9 @@ namespace Infrastructure.Core
         public string HtmlBody { get; set; } = "";
 
         public string BackgroundImage { get; set; } = "";
+
+        public DateTime LaunchDate { get; set; }
+
+        public DateTime EndDate { get; set; }
     }
 }

@@ -18,7 +18,8 @@ namespace Infrastructure.External.SMS
         
         public string ApiKey { get; set; }
         public string ApiSecret { get; set; }
-       
+        public string FromPhone { get; set; }
+
 
 
         public async Task<MessageResource> SendSMS(SMSFormValue value)
@@ -28,7 +29,7 @@ namespace Infrastructure.External.SMS
 
             var result = await MessageResource.CreateAsync(
                 body: value.Message,
-                from: new Twilio.Types.PhoneNumber(value.From),
+                from: new Twilio.Types.PhoneNumber(FromPhone),
                 to: new Twilio.Types.PhoneNumber(value.To));
 
             return result;

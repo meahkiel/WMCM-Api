@@ -1,13 +1,15 @@
 ﻿using Application.DTO;
 using Core.Campaigns;
+using Core.Channels;
 
 namespace Application.Interface
 {
     public interface IServiceFactory
     {
-        IActivityServiceAccessor<ActivityEntryDTO,Activity> GetWebPost();
-        IActivityServiceAccessor<ActivityEntryDTO, Activity> GetSMS();
-        IActivityServiceAccessor<ActivityEntryDTO, Activity> GetSMTP();
+        IActivityServiceAccessor GetWebPost(ChannelSetting setting);
+        IActivityServiceAccessor GetSMS(ChannelSetting setting);
+        IActivityServiceAccessor GetSMTP(ChannelSetting setting);
+        IActivityServiceAccessor GetSocial(ChannelSetting setting);
 
 
 

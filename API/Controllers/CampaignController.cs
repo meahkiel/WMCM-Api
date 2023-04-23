@@ -41,9 +41,9 @@ namespace API.Controllers
 
 
         [HttpPut("edit")]
-        public async Task<IActionResult> Edit([FromBody] CampaignDTO campaign)
+        public async Task<IActionResult> Edit([FromBody] Edit.Command command)
         {
-            var unit = await _mediator.Send(new Edit.Command { Campaign = campaign });
+            var unit = await _mediator.Send(command);
             return HandleResult(unit);
         }
 

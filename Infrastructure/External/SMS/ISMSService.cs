@@ -9,6 +9,7 @@ namespace Infrastructure.External.SMS
     {
         public string ApiKey { get; set; }
         public string ApiSecret { get; set; }
+        public string FromPhone { get; set; }
 
         Task<MessageResource> SendSMS(SMSFormValue value);
        

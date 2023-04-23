@@ -1,9 +1,12 @@
+using Core.Users;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Persistence.Context;
+using Persistence.Seeds;
 using System;
 using System.Threading.Tasks;
 
@@ -23,9 +26,12 @@ namespace API
                 var context = services.GetRequiredService<DataContext>();
                 context.Database.Migrate();
 
-                //var userManager = services.GetRequiredService<UserManager<AppUser>>();
-                //var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+                var userManager = services.GetRequiredService<UserManager<AppUser>>();
+                var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
                 //await Seed.DataSeedChannel(context);
+                //await Seed.DataSeedTemplate(context);
+                //await Seed.DataSeedContact(context);
+                //await Seed.SeedRoleData(context,userManager,roleManager);
 
             }
             catch (Exception ex)

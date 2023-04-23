@@ -14,7 +14,6 @@ namespace API.Controllers
     public class ActivityController : BaseApiController
     {
       
-
         public ActivityController(IMediator mediator) : base(mediator)
         {
            
@@ -24,6 +23,12 @@ namespace API.Controllers
         public async Task<IActionResult> Index(string type)
         {
             return HandleResult(await _mediator.Send(new Initialize.Query { Type = type}));
+        }
+
+        [HttpGet("replay/{id}")]
+        public async Task<IActionResult> Replay([FromRoute]ExecuteActivity.Command cmd)
+        {
+            return HandleResult(await _mediator.Send(cmd));
         }
 
        

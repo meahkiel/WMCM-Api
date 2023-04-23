@@ -10,6 +10,7 @@ namespace Core.Enum
     {
         Manager,
         Admin,
-        Staff
+        Staff,
+        Sales
     }
 }

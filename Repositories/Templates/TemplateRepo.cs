@@ -23,7 +23,10 @@ namespace Repositories.Templates
 
         public async Task<IEnumerable<Template>> GetAllTemplatesAsync(string type)
         {
-            return await _context.Templates.Where(t => t.Type == type).ToListAsync();
+            return await _context.Templates
+                                    .Where(t => t.Type == type)
+                                    .ToListAsync();
+
         }
 
         public void Remove(Template entity)

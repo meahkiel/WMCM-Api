@@ -22,16 +22,16 @@ namespace Application.Campaigns.Commands
             public DateTime DateTo { get; set; }
         }
 
-        public class CommandValidator : AbstractValidator<Command>
+        public class CreateUpdateValidator : AbstractValidator<Command>
         {
-            public CommandValidator()
+            public CreateUpdateValidator()
             {
                 RuleFor(x => x.Title).NotNull().NotEmpty();
 
                 RuleFor(x => x.DateFrom)
-                    .GreaterThanOrEqualTo(DateTime.UtcNow)
+                    .GreaterThanOrEqualTo(DateTime.Today)
                     .LessThanOrEqualTo(x => x.DateTo);
-                
+
                 RuleFor(x => x.DateTo).GreaterThanOrEqualTo(x => x.DateFrom);
             }
         }
@@ -40,11 +40,13 @@ namespace Application.Campaigns.Commands
         {
             private readonly UnitWrapper _context;
             private readonly IMapper _mapper;
+            private readonly IValidator<Command> _validator;
 
-            public CommandHandler(UnitWrapper context, IMapper mapper)
+            public CommandHandler(UnitWrapper context, IMapper mapper,IValidator<Command> validator)
             {
                 _context = context;
                 _mapper = mapper;
+                _validator = validator;
             }
 
             public async Task<Result<CampaignDTO>> Handle(Command request, CancellationToken cancellationToken)
@@ -52,6 +54,13 @@ namespace Application.Campaigns.Commands
 
                 try
                 {
+                    var validateResult = await _validator.ValidateAsync(request);
+                    
+                    if(!validateResult.IsValid)
+                    {
+                        return Result<CampaignDTO>.Failure(validateResult.Errors[0].ErrorMessage);
+                    }
+
                     //check logical data
                     var campaign = new Campaign {
                         Id = Guid.NewGuid(),
