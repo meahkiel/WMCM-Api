@@ -44,6 +44,15 @@ namespace Repositories.Campaigns
                 .ToListAsync();
         }
 
+        public async Task<Activity?> GetActivityByType(string type)
+        {
+            return await _context.Campaigns.Include(c => c.Activities)
+                            .Where(c => c.DateTo >= DateTime.UtcNow)
+                            .SelectMany(c => c.Activities)
+                            .Where(a => a.Type == type)
+                            .FirstOrDefaultAsync();
+        }
+
         public async Task<Activity> GetByActivity(string activityId)
         {
 

@@ -1,36 +1,26 @@
 ﻿using Application.DTO;
 using Application.SeedWorks;
-using MediatR;
-using Repositories.Unit;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 
-namespace Application.Activities.Queries
+namespace Application.Activities.Queries;
+
+public static class Initialize
 {
-    public class Initialize
+    public record Query(string Type) : IRequest<Result<ActivityInitial>>;
+
+    public class QueryHandler : IRequestHandler<Query, Result<ActivityInitial>>
     {
-        public class Query : IRequest<Result<ActivityInitial>>
-        {
+        private readonly UnitWrapper _context;
 
-            public string Type { get; set; }
+        public QueryHandler(UnitWrapper context)
+        {
+            _context = context;
         }
-
-        public class QueryHandler : IRequestHandler<Query, Result<ActivityInitial>>
+        public async Task<Result<ActivityInitial>> Handle(Query request, CancellationToken cancellationToken)
         {
-            private readonly UnitWrapper _context;
+            var groups = await _context.Customers.GetGroupContact();
+            var templates = await _context.TemplateRepo.GetAllTemplatesAsync(request.Type.ToLower());
 
-            public QueryHandler(UnitWrapper context)
-            {
-                _context = context;
-            }
-            public async Task<Result<ActivityInitial>> Handle(Query request, CancellationToken cancellationToken)
-            {
-                var groups = await _context.Customers.GetGroupContact();
-                var templates = await _context.TemplateRepo.GetAllTemplatesAsync(request.Type.ToLower());
-
-                return Result<ActivityInitial>.Success(new ActivityInitial(groups.ToArray(), templates.ToList()));
-            }
+            return Result<ActivityInitial>.Success(new ActivityInitial(groups.ToArray(), templates.ToList()));
         }
     }
 }

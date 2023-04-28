@@ -12,13 +12,13 @@ namespace Application.DTO
         public string Gender { get; set; }
         public string MobileNo { get; set; }
 
-        public string PrimaryContact { get; set; }
-        public string EmailAddress { get; set; }
+        public string? PrimaryContact { get; set; }
+        public string? EmailAddress { get; set; }
 
-        public string Location { get; set; }
+        public string? Location { get; set; }
 
         public string GroupTag { get; set; }
-        public string Type { get; set; }
+        public string? Type { get; set; }
 
         public string Id { get; set; }
 

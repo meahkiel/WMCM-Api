@@ -1,9 +1,11 @@
-﻿using Application.DTO;
+﻿using Application.Configuration;
+using Application.DTO;
 using Application.Interface;
 using Application.SeedWorks;
 using Core.Campaigns;
 using Core.Channels;
 using Infrastructure.External.SMS;
+using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -16,11 +18,16 @@ namespace Infrastructure.Services.Campaigns
 
         private readonly ISMSService _smsService;
         private readonly ChannelSetting _setting;
+        private readonly TwilioOption _option;
 
-        public SMSActivityService(ISMSService smsService, ChannelSetting setting)
+        public SMSActivityService(
+            ISMSService smsService, 
+            ChannelSetting setting,
+            IOptions<TwilioOption> option)
         {
             _smsService = smsService;
             _setting = setting;
+            _option = option.Value;
         }
 
         
@@ -39,10 +46,13 @@ namespace Infrastructure.Services.Campaigns
         }
 
         private async Task SendSMS(string body, List<string> mobileNos, ChannelSetting smsActivity)
-        {
+        {   
             _smsService.ApiKey = smsActivity.ApiKey;
             _smsService.ApiSecret = smsActivity.ApiSecretKey;
             _smsService.FromPhone = smsActivity.PhoneNo;
+
+            //smsActivity.PhoneNo;
+
             //start sending the message
             foreach (var mobileNo in mobileNos) 
             {

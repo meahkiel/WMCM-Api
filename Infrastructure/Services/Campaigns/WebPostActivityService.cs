@@ -30,17 +30,17 @@ namespace Infrastructure.Services.Campaigns
         public async Task<ServiceMessageBroker?> Execute(Activity activity)
         {
 
-            _webPostService.BaseUrl = _setting.BaseUrl;
+            //_webPostService.BaseUrl = _setting.BaseUrl;
 
-            await _webPostService.Post(new Core.PostParameter
-            {
-                BackgroundImage = activity.CoverImage,
-                HtmlBody = activity.Body,
-                SectionName = activity.To,
-                Title = activity.Title,
-                LaunchDate = activity.DateSchedule ?? DateTime.Now,
-                EndDate = activity.DateSchedule == null ? DateTime.Now.AddDays(15) : activity.DateSchedule.Value.AddDays(15)
-            });
+            //await _webPostService.Post(new Core.PostParameter
+            //{
+            //    BackgroundImage = activity.CoverImage,
+            //    HtmlBody = activity.Body,
+            //    SectionName = activity.To,
+            //    Title = activity.Title,
+            //    LaunchDate = activity.DateSchedule ?? DateTime.Now,
+            //    EndDate = activity.DateSchedule == null ? DateTime.Now.AddDays(15) : activity.DateSchedule.Value.AddDays(15)
+            //});
 
             return new ServiceMessageBroker(DateTime.Today, "Success", true);
         }

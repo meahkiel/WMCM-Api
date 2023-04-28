@@ -8,7 +8,7 @@ using Infrastructure.Services;
 using Infrastructure.Services.Campaigns;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-
+using System.Net.Http;
 
 namespace Infrastructure
 {
@@ -19,7 +19,7 @@ namespace Infrastructure
         {
 
             //add infrastructure twilio
-
+            
             services.AddScoped<IServiceFactory, ServiceFactory>();
             services.AddScoped<ISMSService, TwilioSMS>();
             services.AddScoped<ISendSMTPClient, SendSMTPClient>();
@@ -28,6 +28,10 @@ namespace Infrastructure
             
             services.AddScoped<IUserAccessorService, UserAccessorService>();
             services.AddScoped<IUploadCsvImportContacts, UploadCsvImportContacts>();
+
+            services.AddScoped<ISentimentService, SentimentService>();
+
+            services.AddScoped<HttpClient>();
 
             return services;
         }

@@ -1,16 +1,8 @@
-﻿using Application.DTO;
+﻿
+
+using Application.DTO;
 using Application.SeedWorks;
-using AutoMapper;
 using Core.Contacts;
-using MediatR;
-using Persistence.Context;
-using Repositories.Unit;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Application.Contacts
 {

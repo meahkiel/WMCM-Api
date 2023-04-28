@@ -16,18 +16,18 @@ namespace Application.SeedWorks.PipelineBehaviours
         {
             _validators = validators;
         }
+       
 
-
-        public Task<TResponse> Handle(TRequest request, CancellationToken cancellationToken, RequestHandlerDelegate<TResponse> next)
+        public Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
         {
             var context = new ValidationContext<TRequest>(request);
 
             var failures = _validators.Select(v => v.Validate(context))
                         .SelectMany(v => v.Errors)
                         .Where(v => v != null)
-                        .ToList();                      
-            
-            if(failures.Any())
+                        .ToList();
+
+            if (failures.Any())
             {
                 throw new ValidationException(failures);
             }

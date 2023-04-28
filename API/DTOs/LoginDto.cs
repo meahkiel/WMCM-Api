@@ -1,4 +1,4 @@
-﻿namespace API.DTOs
+﻿namespace WCMAPI.DTOs
 {
     public class LoginDto
     {

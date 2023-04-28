@@ -10,7 +10,7 @@ using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace API.Extensions
+namespace WCMAPI.Extensions
 {
     public class CsvInputFormatter : TextInputFormatter
     {

@@ -1,6 +1,5 @@
 ﻿using Application.DTO;
 using Application.DTOs;
-using AutoMapper;
 using Core.Campaigns;
 using Core.Contacts;
 using Core.Tasks;

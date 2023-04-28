@@ -1,23 +1,13 @@
 ﻿using Application.Interface;
 using Application.SeedWorks;
-using Core.Channels;
 using Core.Enum;
-using MediatR;
-using Repositories.Unit;
-using System;
-using System.Threading;
-using System.Threading.Tasks;
+
 
 namespace Application.Activities.Commands
 {
     public class ExecuteActivity
     {
-
-        public class Command : IRequest<Result<Unit>>
-        {
-            public string Id { get; set; }
-
-        }
+        public record Command(string Id) : IRequest<Result<Unit>>;
 
         public class CommandHandler : IRequestHandler<Command, Result<Unit>>
         {
@@ -35,7 +25,6 @@ namespace Application.Activities.Commands
                 "web" => _serviceFactory.GetWebPost(await _context.Channels.FindByTypeAsync("web")),
                 "sms" => _serviceFactory.GetSMS(await _context.Channels.FindByTypeAsync("twilio")),
                 "email" => _serviceFactory.GetSMTP(await _context.Channels.FindByTypeAsync("email")),
-                "social" => _serviceFactory.GetSocial(new ChannelSetting()),
                 _ => throw new Exception("Cannot Service Type")
             };
 

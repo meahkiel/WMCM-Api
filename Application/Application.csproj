@@ -1,28 +1,30 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
+	<TargetFramework>net7.0</TargetFramework>
+	  <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Activities\CreateSMSActivity.cs" />
+	<Compile Remove="Activities\CreateSMSActivity.cs" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
-    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.3.0" />
-    <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="10.0.1" />
-    <PackageReference Include="Microsoft.AspNetCore.Http.Features" Version="2.2.0" />
+	<PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
+	<PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.5.2" />
+	<PackageReference Include="MediatR" Version="12.0.1" />
+	<PackageReference Include="MediatR.Contracts" Version="2.0.1" />
+	<PackageReference Include="Microsoft.AspNetCore.Http.Features" Version="5.0.17" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Core\Core.csproj" />
-    <ProjectReference Include="..\Repositories\Repositories.csproj" />
+	<ProjectReference Include="..\Core\Core.csproj" />
+	<ProjectReference Include="..\Repositories\Repositories.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Activities\Services\" />
-    <Folder Include="Campaigns\Validators\" />
+	<Folder Include="Activities\Services\" />
+	<Folder Include="Campaigns\Validators\" />
   </ItemGroup>
 
 </Project>

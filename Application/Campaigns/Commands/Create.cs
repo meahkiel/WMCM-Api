@@ -1,17 +1,12 @@
 ﻿using Application.DTO;
 using Application.SeedWorks;
-using AutoMapper;
+
 using Core.Campaigns;
-using FluentValidation;
-using MediatR;
-using Repositories.Unit;
-using System;
-using System.Threading;
-using System.Threading.Tasks;
+
 
 namespace Application.Campaigns.Commands
 {
-    public class Create
+    public static class Create
     {
         public class Command : IRequest<Result<CampaignDTO>>
         {
@@ -42,7 +37,10 @@ namespace Application.Campaigns.Commands
             private readonly IMapper _mapper;
             private readonly IValidator<Command> _validator;
 
-            public CommandHandler(UnitWrapper context, IMapper mapper,IValidator<Command> validator)
+            public CommandHandler(
+                UnitWrapper context, 
+                IMapper mapper,
+                IValidator<Command> validator)
             {
                 _context = context;
                 _mapper = mapper;

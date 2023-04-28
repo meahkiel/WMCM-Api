@@ -1,11 +1,5 @@
 ﻿using Application.SeedWorks;
 using Core.Channels;
-using MediatR;
-using Repositories.Unit;
-using System;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Application.Channels
 {

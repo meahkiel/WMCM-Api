@@ -1,5 +1,5 @@
-﻿using API.DTOs;
-using API.Services;
+﻿using WCMAPI.DTOs;
+using WCMAPI.Services;
 using Application.SeedWorks;
 using Core.Notifications;
 using Core.Users;
@@ -14,7 +14,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
-namespace API.Controllers
+namespace WCMAPI.Controllers
 {
 
     [Authorize(Roles = "admin,manager,staff,sales")]

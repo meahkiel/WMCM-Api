@@ -1,82 +1,69 @@
 ﻿using Application.DTO;
 using Application.SeedWorks;
-using AutoMapper;
-using Core.Campaigns;
-using MediatR;
-using Microsoft.EntityFrameworkCore;
-using Persistence.Context;
-using Repositories.Unit;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 
-namespace Application.Campaigns.Queries
+namespace Application.Campaigns.Queries;
+
+public class List
 {
-    public class List
+    public class Query : IRequest<Result<CampaignListDTO>>
     {
-        public class Query : IRequest<Result<CampaignListDTO>>
-        {
 
+    }
+
+
+    public class QueryHandler : IRequestHandler<Query, Result<CampaignListDTO>>
+    {
+        private readonly UnitWrapper _context;
+        private readonly IMapper _mapper;
+
+        public QueryHandler(UnitWrapper context, IMapper mapper)
+        {
+            _context = context;
+            _mapper = mapper;
         }
 
-
-        public class QueryHandler : IRequestHandler<Query, Result<CampaignListDTO>>
+        public async Task<Result<CampaignListDTO>> Handle(Query request, CancellationToken cancellationToken)
         {
-            private readonly UnitWrapper _context;
-            private readonly IMapper _mapper;
-
-            public QueryHandler(UnitWrapper context, IMapper mapper)
+            try
             {
-                _context = context;
-                _mapper = mapper;
-            }
+                var data = await _context.CampaignRepo.GetActiveCampaigns();
+                CampaignListDTO list = new CampaignListDTO();
 
-            public async Task<Result<CampaignListDTO>> Handle(Query request, CancellationToken cancellationToken)
-            {
-                try
+                if (data != null)
                 {
-                    var data = await _context.CampaignRepo.GetActiveCampaigns();
-                    CampaignListDTO list = new CampaignListDTO();
-
-                    if (data != null)
+                    foreach (var item in data)
                     {
-                        foreach (var item in data)
-                        {
-                            var dto = _mapper.Map<CampaignDTO>(item);
+                        var dto = _mapper.Map<CampaignDTO>(item);
 
-                            list.Campaigns.Add(dto);
+                        list.Campaigns.Add(dto);
 
-                            list.TotalSMSActivities = item.Activities
-                                                            .Where(a => a.Type == "sms")
-                                                            .Count();
-
-                            list.TotalEmailActivities = item.Activities
-                                                            .Where(a => a.Type == "email")
-                                                            .Count();
-
-                            list.TotalEcommerce = item.Activities
-                                                        .Where(a => a.Type == "web")
+                        list.TotalSMSActivities = item.Activities
+                                                        .Where(a => a.Type == "sms")
                                                         .Count();
 
-                            list.TotalSocialPost = item.Activities
-                                                         .Where(a => a.Type == "social")
+                        list.TotalEmailActivities = item.Activities
+                                                        .Where(a => a.Type == "email")
                                                         .Count();
 
-                        }
+                        list.TotalEcommerce = item.Activities
+                                                    .Where(a => a.Type == "web")
+                                                    .Count();
+
+                        list.TotalSocialPost = item.Activities
+                                                     .Where(a => a.Type == "social")
+                                                    .Count();
+
                     }
-
-                    return Result<CampaignListDTO>.Success(list);
-                }
-                catch (Exception ex)
-                {
-                    return Result<CampaignListDTO>.Failure(ex.Message);
                 }
 
-
+                return Result<CampaignListDTO>.Success(list);
             }
+            catch (Exception ex)
+            {
+                return Result<CampaignListDTO>.Failure(ex.Message);
+            }
+
+
         }
     }
 }

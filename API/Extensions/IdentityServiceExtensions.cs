@@ -1,4 +1,4 @@
-﻿using API.Services;
+﻿using WCMAPI.Services;
 using Core.Users;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -9,7 +9,7 @@ using Persistence.Context;
 using System;
 using System.Text;
 
-namespace API.Extensions
+namespace WCMAPI.Extensions
 {
     public static class IdentityServiceExtensions
     {

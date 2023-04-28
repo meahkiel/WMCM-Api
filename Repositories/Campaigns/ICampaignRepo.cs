@@ -9,6 +9,8 @@ namespace Repositories.Campaigns
     public interface ICampaignRepo : IRepositoryBase<Campaign>
     {
         Task<IEnumerable<Campaign>> GetActiveCampaigns();
+
+        Task<Activity?> GetActivityByType(string type);
         
         Task<Campaign> GetSingleCampaign(Guid id);
 

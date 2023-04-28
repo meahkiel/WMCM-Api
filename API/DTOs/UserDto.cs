@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace API.DTOs
+namespace WCMAPI.DTOs
 {
     public class UserDto
     {

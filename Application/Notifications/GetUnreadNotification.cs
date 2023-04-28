@@ -1,14 +1,7 @@
 ﻿using Application.Interface;
 using Application.SeedWorks;
 using Core.Notifications;
-using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Repositories.Unit;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Application.Notifications
 {

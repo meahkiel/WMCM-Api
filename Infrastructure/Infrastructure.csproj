@@ -1,25 +1,33 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net7.0</TargetFramework>
   </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="CloudinaryDotNet" Version="1.20.0" />
-    <PackageReference Include="Facebook" Version="7.0.6" />
     <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
-    <PackageReference Include="MimeKit" Version="3.4.1" />
+    <PackageReference Include="Microsoft.ML" Version="1.7.1" />
+    <PackageReference Include="MimeKit" Version="4.0.0" />
     <PackageReference Include="NETCore.MailKit" Version="2.1.0" />
-    <PackageReference Include="RestSharp" Version="108.0.2" />
-    <PackageReference Include="Twilio" Version="5.75.1" />
+    <PackageReference Include="RestSharp" Version="110.2.0" />
+    <PackageReference Include="Twilio" Version="6.5.0" />
   </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\Application\Application.csproj" />
   </ItemGroup>
-
   <ItemGroup>
+    <Folder Include="External\Social\" />
     <Folder Include="Repositories\" />
   </ItemGroup>
-
+  <ItemGroup Label="BaseSentiment">
+    <None Include="BaseSentiment.consumption.cs">
+      <DependentUpon>BaseSentiment.mbconfig</DependentUpon>
+    </None>
+    <None Include="BaseSentiment.training.cs">
+      <DependentUpon>BaseSentiment.mbconfig</DependentUpon>
+    </None>
+    <None Include="BaseSentiment.zip">
+      <DependentUpon>BaseSentiment.mbconfig</DependentUpon>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 </Project>

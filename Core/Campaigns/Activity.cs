@@ -82,14 +82,10 @@ namespace Core.Campaigns
         public string Type { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
-
         public DateTime? DateSchedule { get; set; } = null;
-
         public bool IsRecurrent { get; set; } = false;
         public int Days { get; set; } = 0;
-
         public DateTime DispatchDate { get; set; }
-        
         public virtual Campaign Campaign { get; set; }
 
         public string To { get; set; }

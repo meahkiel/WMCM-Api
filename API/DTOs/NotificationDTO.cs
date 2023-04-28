@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace API.DTOs
+namespace WCMAPI.DTOs
 {
     public class NotificationDTO
     {

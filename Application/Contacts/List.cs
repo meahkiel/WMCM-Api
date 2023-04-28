@@ -1,11 +1,5 @@
 ﻿using Application.DTO;
 using Application.SeedWorks;
-using AutoMapper;
-using MediatR;
-using Repositories.Unit;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Application.Contacts
 {

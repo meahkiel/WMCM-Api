@@ -1,0 +1,30 @@
+# fly.toml app configuration file generated for wmcm-demo on 2023-04-23T22:42:01+03:00
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+
+app = "wmcm-demo"
+primary_region = "sin"
+
+[build]
+  image = "kielmeah/wcmapi"
+
+[env]
+  ASPNETCORE_URLS="http://+:8080"
+  Cloudinary__CloudName="dbrlbbfpf"
+  Cloudinay__ApiKey="696135133456347"
+  TwilioSMSKey__PhoneNo="+15855221613"
+  TwilioSMSKey__AccountSID="ACf2d0f5df971acd20300db7622599c714"
+  
+[http_service]
+  internal_port = 8080
+  force_https = true
+  auto_stop_machines = true
+  auto_start_machines = true
+
+[checks]
+  [checks.alive]
+    type = "tcp"
+    interval = "15s"
+    timeout = "2s"
+    grace_period = "5s"

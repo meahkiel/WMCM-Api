@@ -1,29 +1,14 @@
-﻿using Application.DTO;
-using Application.SeedWorks;
-using AutoMapper;
+﻿using Application.SeedWorks;
 using Core.Campaigns;
-using FluentValidation;
-using MediatR;
-using Repositories.Unit;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Application.Campaigns.Commands
 {
-    public class Edit
+    public static class Edit
     {
-
-        public class Command : IRequest<Result<Unit>>
+        public record Command(Guid Id, DateTime DateFrom, DateTime DateTo) : IRequest<Result<Unit>>
         {
-            public Guid Id { get; set; }
             public string Title { get; set; } = "";
             public string Description { get; set; } = "";
-            public DateTime DateFrom { get; set; }
-            public DateTime DateTo { get; set; }
         }
 
         public class CreateUpdateValidator : AbstractValidator<Command>

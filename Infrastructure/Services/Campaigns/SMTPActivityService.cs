@@ -36,7 +36,7 @@ namespace Infrastructure.Services.Campaigns
 
       
 
-        public async Task Execution(List<string> emailAdds, string subject, string body)
+        private async Task Execution(List<string> emailAdds, string subject, string body)
         {
 
             _sendSMTPClient.Email = _setting.Email;

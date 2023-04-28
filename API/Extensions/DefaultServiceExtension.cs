@@ -14,7 +14,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 
-namespace API.Extensions
+namespace WCMAPI.Extensions
 {
     public static class DefaultServiceExtension
     {

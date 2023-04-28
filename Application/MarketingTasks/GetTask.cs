@@ -1,14 +1,8 @@
 ﻿using Application.DTOs;
 using Application.Interface;
 using Application.SeedWorks;
-using AutoMapper;
 using Core.Enum;
 using Core.Tasks;
-using MediatR;
-using Repositories.Unit;
-using System;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Application.MarketingTasks
 {

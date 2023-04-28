@@ -9,7 +9,7 @@ using System.Net;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace API.Middleware
+namespace WCMAPI.Middleware
 {
     public class ExceptionMiddleware
     {

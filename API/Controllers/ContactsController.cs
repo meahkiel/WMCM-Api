@@ -7,7 +7,7 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
-namespace API.Controllers
+namespace WCMAPI.Controllers
 {
 
     public class ContactsController : BaseApiController

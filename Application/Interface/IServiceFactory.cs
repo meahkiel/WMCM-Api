@@ -1,6 +1,4 @@
-﻿using Application.DTO;
-using Core.Campaigns;
-using Core.Channels;
+﻿using Core.Channels;
 
 namespace Application.Interface
 {
@@ -9,7 +7,9 @@ namespace Application.Interface
         IActivityServiceAccessor GetWebPost(ChannelSetting setting);
         IActivityServiceAccessor GetSMS(ChannelSetting setting);
         IActivityServiceAccessor GetSMTP(ChannelSetting setting);
+
         IActivityServiceAccessor GetSocial(ChannelSetting setting);
+    
 
 
 

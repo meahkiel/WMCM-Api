@@ -10,7 +10,7 @@ using Persistence.Seeds;
 using System;
 using System.Threading.Tasks;
 
-namespace API
+namespace WCMAPI
 {
     public class Program
     {

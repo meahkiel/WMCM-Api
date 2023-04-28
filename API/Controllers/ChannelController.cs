@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
-namespace API.Controllers
+namespace WCMAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]

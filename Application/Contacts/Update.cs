@@ -1,53 +1,46 @@
 ﻿using Application.DTO;
 using Application.SeedWorks;
-using AutoMapper;
 using Core.Contacts;
-using MediatR;
-using Repositories.Unit;
-using System;
-using System.Threading;
-using System.Threading.Tasks;
 
-namespace Application.Contacts
+namespace Application.Contacts;
+
+public class Update
 {
-    public class Update
+    public class Command : IRequest<Result<Unit>>
     {
-        public class Command : IRequest<Result<Unit>>
+        public ContactFormDTO ContactForm { get; set; }
+    }
+
+    public class CommandHandler : IRequestHandler<Command,Result<Unit>>
+    {
+        private readonly UnitWrapper _context;
+        private readonly IMapper _mapper;
+
+        public CommandHandler(UnitWrapper context, IMapper mapper)
         {
-            public ContactFormDTO ContactForm { get; set; }
+            _context = context;
+            _mapper = mapper;
         }
 
-        public class CommandHandler : IRequestHandler<Command,Result<Unit>>
+        public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
         {
-            private readonly UnitWrapper _context;
-            private readonly IMapper _mapper;
-
-            public CommandHandler(UnitWrapper context, IMapper mapper)
+            
+            try
             {
-                _context = context;
-                _mapper = mapper;
+
+                var contact = _mapper.Map<Contact>(request.ContactForm);
+                _context.Customers.Update(contact);
+                if (!await _context.SaveChangesAsync())
+                {
+                    throw new Exception("Contact cannot update");
+                }
+
+                return Result<Unit>.Success(Unit.Value);
+
             }
-
-            public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
+            catch(Exception ex)
             {
-                
-                try
-                {
-
-                    var contact = _mapper.Map<Contact>(request.ContactForm);
-                    _context.Customers.Update(contact);
-                    if (!await _context.SaveChangesAsync())
-                    {
-                        throw new Exception("Contact cannot update");
-                    }
-
-                    return Result<Unit>.Success(Unit.Value);
-
-                }
-                catch(Exception ex)
-                {
-                    return Result<Unit>.Failure(ex.Message);
-                }
+                return Result<Unit>.Failure(ex.Message);
             }
         }
     }
