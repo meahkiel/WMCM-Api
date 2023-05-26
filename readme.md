@@ -26,7 +26,7 @@ docker run --rm -it -p 8080:80
 ### WMCM Admin Login 
 - Enter username and Password in the web app 
 ```
-Username: bob
+Username: admin
 Password: Pa$$w0rd
 ```
 - Click Channel 
